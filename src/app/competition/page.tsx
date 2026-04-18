@@ -294,8 +294,8 @@ export default function CompetitionPage() {
       )}
 
       {/* Top Bar */}
-      <header className="border-b border-white/5 bg-black/30 backdrop-blur-md px-4 sm:px-8 py-3">
-        <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
+      <header className="border-b border-white/5 bg-black/30 backdrop-blur-md px-4 sm:px-12 py-4">
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-6">
           {/* Logo */}
           <div className="flex items-center gap-2 shrink-0">
             <span className="text-lg">💡</span>
@@ -333,7 +333,7 @@ export default function CompetitionPage() {
         </div>
       </header>
 
-      <main className="flex-1 main-container py-10 md:py-20 flex flex-col gap-10 overflow-hidden">
+      <main className="flex-1 main-container py-8 md:py-16 flex flex-col gap-10 overflow-hidden">
         {/* Progress */}
         <div className="animate-fade-in">
           <ProgressBar 
@@ -344,12 +344,15 @@ export default function CompetitionPage() {
         </div>
 
         {/* Question Card */}
-        <div className="glass-card p-8 md:p-14 animate-fade-in-up flex-1 flex flex-col gap-8 min-h-0">
+        <div className="glass-card p-6 md:p-12 animate-fade-in-up flex-1 flex flex-col gap-8 min-h-0">
           {/* Question Header */}
           <div className="shrink-0">
             <div className="flex items-center gap-2 mb-2">
-            <h2 className="text-xl font-bold text-white mb-2">{question.title}</h2>
-            <div className="text-gray-300 leading-relaxed text-sm bg-white/5 rounded-2xl p-4 border border-white/5 max-h-[120px] overflow-y-auto max-w-3xl">
+              <span className="text-xl">{question.emoji}</span>
+              <span className="badge badge-blue">Question {qi + 1} of {config.questions.length}</span>
+            </div>
+            <h2 className="text-lg font-bold text-white mb-2">{question.title}</h2>
+            <div className="text-gray-300 leading-relaxed text-sm bg-white/5 rounded-xl p-3 border border-white/5 max-h-[100px] overflow-y-auto">
               {question.prompt}
             </div>
           </div>
@@ -367,7 +370,7 @@ export default function CompetitionPage() {
               disabled={submitting}
               placeholder={`Start typing your answer here...`}
               className="input-field resize-none flex-1 leading-relaxed text-lg p-6"
-              style={{ fontFamily: 'var(--font-inter)', lineHeight: '1.75' }}
+              style={{ fontFamily: 'var(--font-inter)' }}
             />
             <div className="shrink-0 mt-2">
               <WordCounter text={answer} min={config.minWords} max={config.maxWords} />

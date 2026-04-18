@@ -40,7 +40,7 @@ function FeatureCard({ icon: Icon, iconBg, title, desc, delay = '0s' }: {
   icon: React.ElementType; iconBg: string; title: string; desc: string; delay?: string;
 }) {
   return (
-    <div className="glass-card p-8 flex flex-col gap-5 reveal" style={{ transitionDelay: delay }}>
+    <div className="glass-card p-10 flex flex-col gap-6 reveal" style={{ transitionDelay: delay }}>
       <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10 ${iconBg}`}>
         <Icon className="w-7 h-7" />
       </div>
@@ -142,7 +142,7 @@ export default function HomePage() {
       {/* ════════════════════════════════════════════════════════
           HERO SECTION
       ════════════════════════════════════════════════════════ */}
-      <section className="main-container pt-28 pb-32 md:pt-40 md:pb-44">
+      <section className="main-container pt-20 pb-24">
         <div className="flex flex-col items-center text-center">
 
           {/* Left: Copy */}
@@ -166,7 +166,7 @@ export default function HomePage() {
             </div>
 
             {/* Subtext */}
-            <p className="text-xl text-gray-300 leading-relaxed w-full max-w-2xl px-2 sm:px-0 text-center opacity-90">
+            <p className="text-lg text-gray-300 leading-relaxed w-full max-w-2xl px-2 sm:px-0 text-center">
               Step into the high-stakes arena. Architect solutions to real-world problems under pressure — judged blind, timed to the millisecond.
             </p>
 
@@ -219,7 +219,7 @@ export default function HomePage() {
       {/* ════════════════════════════════════════════════════════
           STATS ROW
       ════════════════════════════════════════════════════════ */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-8 py-28 md:py-36">
+      <section className="max-w-7xl mx-auto px-4 sm:px-12 py-32">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <StatCard value="1,200+" label="Participants" icon={Users} color="bg-blue-500/10 text-blue-400" />
           <StatCard value="4" label="Evaluation Criteria" icon={Target} color="bg-cyan-500/10 text-cyan-400" />
@@ -237,10 +237,10 @@ export default function HomePage() {
             <Sparkles className="w-3.5 h-3.5" />
             Platform Capabilities
           </div>
-          <h2 className="text-5xl md:text-6xl font-black leading-tight mb-6">
+          <h2 className="text-4xl md:text-5xl font-black leading-tight mb-6">
             Built for <span className="gradient-text">Precision.</span><br />Engineered for <span className="gradient-text">Fairness.</span>
           </h2>
-          <p className="text-gray-400 max-w-xl mx-auto text-base">Every feature is designed to give every participant a level playing field.</p>
+          <p className="text-gray-400 max-w-xl mx-auto text-lg">Every feature is designed to give every participant a level playing field.</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
@@ -282,7 +282,7 @@ export default function HomePage() {
       {/* ════════════════════════════════════════════════════════
           HOW IT WORKS
       ════════════════════════════════════════════════════════ */}
-      <section className="border-t border-white/[0.06] py-32 md:py-44">
+      <section className="border-t border-white/[0.06] py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
 

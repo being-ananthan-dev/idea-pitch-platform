@@ -55,10 +55,10 @@ body {
 
 .glass-card {
   background: rgba(13, 19, 38, 0.7);
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08); /* crisp hair border */
-  border-radius: 24px; /* increased rounding for airier feel */
-  box-shadow: 0 4px 20px -1px rgba(0, 0, 0, 0.2), 0 2px 10px -1px rgba(0, 0, 0, 0.1);
+  border-radius: 24px; /* Softened for premium feel */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -455,16 +455,9 @@ body {
 
 @media (min-width: 640px) {
   .main-container {
-    padding-left: 3rem;  /* increased from 2rem */
-    padding-right: 3rem; /* increased from 2rem */
+    padding-left: 3rem;
+    padding-right: 3rem;
   }
-}
-
-.container-narrow {
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
 }
 
 .auth-container {
@@ -472,19 +465,19 @@ body {
   width: 100%;
   display: grid;
   place-items: center;
-  padding: 1rem;
+  padding: 1.5rem;
   background-color: var(--color-bg);
 }
 
 @media (min-width: 640px) {
   .auth-container {
-    padding: 2.5rem;
+    padding: 4rem;
   }
 }
 
 .page-section {
-  padding-top: 8rem;    /* increased from 5rem */
-  padding-bottom: 8rem; /* increased from 6rem */
+  padding-top: 6rem;
+  padding-bottom: 8rem;
 }
 
 /* Table */
@@ -495,25 +488,25 @@ body {
 
 .data-table th {
   background: rgba(17,24,39,0.8);
-  padding: 12px 16px;
+  padding: 16px 20px;
   text-align: left;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: var(--color-text-muted);
   border-bottom: 1px solid var(--color-border);
 }
 
 .data-table td {
-  padding: 18px 24px; /* increased from 14x16 */
+  padding: 20px 20px;
   border-bottom: 1px solid var(--color-border);
-  font-size: 0.95rem;  /* slightly larger */
+  font-size: 0.9rem;
   vertical-align: middle;
 }
 
 .data-table tr:hover td {
-  background: rgba(59,130,246,0.04);
+  background: rgba(59,130,246,0.06);
 }
 
 /* Word counter colors */

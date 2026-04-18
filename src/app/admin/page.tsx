@@ -209,7 +209,7 @@ export default function AdminPage() {
     <div className="min-h-[100dvh] bg-bg">
       {/* Navbar */}
       <nav className="border-b border-white/5 bg-black/30 backdrop-blur-md sticky top-0 z-10 w-full overflow-hidden">
-        <div className="max-w-[1600px] mx-auto px-6 sm:px-12 flex items-center justify-between h-20">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-12 flex items-center justify-between h-20">
           <div className="flex items-center gap-3">
             <span className="text-lg">💡</span>
             <span className="font-bold gradient-text">IntelliPitch</span>
@@ -232,15 +232,15 @@ export default function AdminPage() {
         </div>
       </nav>
 
-      <main className="max-w-[1600px] mx-auto px-6 sm:px-12 py-12 md:py-20 w-full overflow-hidden">
+      <main className="max-w-screen-2xl mx-auto px-4 sm:px-12 py-12 md:py-20 w-full overflow-hidden">
         {/* Tabs */}
-        <div className="flex gap-2 mb-8 border-b border-white/10 pb-0 overflow-x-auto scrollbar-none">
+        <div className="flex gap-4 mb-12 border-b border-white/10 pb-0 overflow-x-auto scrollbar-none">
           {(['dashboard', 'submissions', 'logs', 'competition'] as const).map((tab) => (
             <button
               key={tab}
               id={`admin-tab-${tab}`}
               onClick={() => setActiveTab(tab)}
-              className={`px-5 py-3 text-sm font-semibold capitalize transition-all border-b-2 -mb-px whitespace-nowrap ${
+              className={`px-8 py-4 text-sm font-semibold capitalize transition-all border-b-2 -mb-px whitespace-nowrap ${
                 activeTab === tab
                   ? 'border-blue-500 text-blue-400'
                   : 'border-transparent text-gray-500 hover:text-gray-300'

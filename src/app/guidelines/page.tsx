@@ -110,21 +110,19 @@ export default function GuidelinesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg py-20 px-4 md:py-28">
-      <div className="container-narrow animate-fade-in-up">
+    <main className="auth-container py-24">
+      <div className="max-w-4xl w-full reveal animate-fade-in-up">
         {/* Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 badge badge-blue mb-6 px-4 py-1.5 uppercase tracking-widest font-bold text-[10px]">
-            <span>Step 2 of 3</span>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-bold text-blue-300 uppercase tracking-widest mb-6">
+            <Shield className="w-3.5 h-3.5" />
+            Competition Rules
           </div>
-          <h1 className="text-4xl font-black text-white mb-4 tracking-tight">Competition Guidelines</h1>
-          <p className="text-gray-400 text-lg max-w-lg mx-auto leading-relaxed">Please read carefully before starting. These rules are strictly enforced by our proctoring engine.</p>
+          <h1 className="text-4xl font-black text-white mb-4">Code of Conduct</h1>
+          <p className="text-gray-400 text-lg">Please review the rules carefully. Integrity is our highest priority.</p>
         </div>
 
         {/* Warning Banner */}
-        <div className="rounded-3xl border border-amber-500/20 bg-amber-950/20 p-6 mb-10 flex items-center gap-5">
-          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center shrink-0">
-            <AlertTriangle className="w-6 h-6 text-amber-500" />
           </div>
           <p className="text-amber-300 text-sm md:text-base font-medium leading-relaxed">
             This is a proctored competition. Your actions are monitored server-side. Violations are logged and will affect your final integrity score.

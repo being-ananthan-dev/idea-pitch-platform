@@ -64,18 +64,19 @@ export default function DetailsPage() {
   }
 
   return (
-    <div className="auth-container">
-      <div className="w-full max-w-lg animate-fade-in-up">
+    <main className="auth-container py-12">
+      <div className="max-w-3xl w-full reveal animate-fade-in-up">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 badge badge-blue mb-6 px-4 py-1.5 uppercase tracking-widest font-bold text-[10px]">
-            <span>Step 1 of 3</span>
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-bold text-blue-300 uppercase tracking-widest mb-6">
+            <UserCircle className="w-3.5 h-3.5" />
+            Participant Profile
           </div>
-          <h1 className="text-4xl font-black text-white mb-3 tracking-tight">Your Details</h1>
-          <p className="text-gray-400 text-base max-w-md mx-auto leading-relaxed">Confirm your administrative information before entering the competition arena.</p>
+          <h1 className="text-4xl font-black text-white mb-4">Complete your Registration</h1>
+          <p className="text-gray-400">Please provide your details to enter the IntelliPitch arena.</p>
         </div>
 
-        <div className="glass-card p-10 md:p-14">
+        <div className="glass-card p-8 md:p-12 shadow-2xl relative overflow-hidden group">
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Name */}
             <div>

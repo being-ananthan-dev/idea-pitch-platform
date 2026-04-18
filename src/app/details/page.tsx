@@ -160,6 +160,6 @@ export default function DetailsPage() {
           </form>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

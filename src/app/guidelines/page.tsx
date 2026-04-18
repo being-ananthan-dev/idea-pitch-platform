@@ -123,6 +123,9 @@ export default function GuidelinesPage() {
         </div>
 
         {/* Warning Banner */}
+        <div className="rounded-3xl border border-amber-500/20 bg-amber-950/20 p-8 mb-10 flex items-center gap-6">
+          <div className="w-14 h-14 rounded-2xl bg-amber-500/10 flex items-center justify-center shrink-0 border border-amber-500/20">
+            <AlertTriangle className="w-7 h-7 text-amber-500" />
           </div>
           <p className="text-amber-300 text-sm md:text-base font-medium leading-relaxed">
             This is a proctored competition. Your actions are monitored server-side. Violations are logged and will affect your final integrity score.
@@ -215,6 +218,6 @@ export default function GuidelinesPage() {
           )}
         </button>
       </div>
-    </div>
+    </main>
   );
 }

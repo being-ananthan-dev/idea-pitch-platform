@@ -208,12 +208,12 @@ export default function AdminPage() {
   return (
     <div className="min-h-[100dvh] bg-bg">
       {/* Navbar */}
-      <nav className="border-b border-white/5 bg-black/30 backdrop-blur-md sticky top-0 z-10 w-full overflow-hidden">
+      <nav className="border-b border-white/5 bg-black/40 backdrop-blur-md sticky top-0 z-10 w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between h-16">
           <div className="flex items-center gap-3">
-            <span className="text-lg">💡</span>
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-sm shadow-[0_0_12px_rgba(59,130,246,0.4)]">💡</div>
             <span className="font-bold gradient-text">IntelliPitch</span>
-            <span className="badge badge-red text-xs">Admin Panel</span>
+            <span className="badge badge-red text-[10px] tracking-widest uppercase">Admin</span>
           </div>
           <div className="flex items-center gap-3">
             <button
@@ -225,7 +225,7 @@ export default function AdminPage() {
               <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
               Refresh
             </button>
-            <button onClick={signOut} className="text-gray-400 hover:text-white transition-colors p-2">
+            <button onClick={signOut} className="text-gray-400 hover:text-red-400 transition-colors p-2 rounded-lg hover:bg-red-500/10" title="Sign out">
               <LogOut className="w-4 h-4" />
             </button>
           </div>
@@ -234,19 +234,25 @@ export default function AdminPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-8 py-8 md:py-12 w-full overflow-hidden">
         {/* Tabs */}
-        <div className="flex gap-2 mb-8 border-b border-white/10 pb-0 overflow-x-auto scrollbar-none">
-          {(['dashboard', 'submissions', 'logs', 'competition'] as const).map((tab) => (
+        <div className="flex gap-1 mb-8 bg-white/[0.03] border border-white/[0.06] rounded-xl p-1 w-fit">
+          {([
+            { key: 'dashboard', label: 'Dashboard', icon: <Activity className="w-3.5 h-3.5" /> },
+            { key: 'submissions', label: 'Submissions', icon: <FileText className="w-3.5 h-3.5" /> },
+            { key: 'logs', label: 'Logs', icon: <Shield className="w-3.5 h-3.5" /> },
+            { key: 'competition', label: 'Competition', icon: <Trophy className="w-3.5 h-3.5" /> },
+          ] as const).map(({ key: tab, label, icon }) => (
             <button
               key={tab}
               id={`admin-tab-${tab}`}
               onClick={() => setActiveTab(tab)}
-              className={`px-5 py-3 text-sm font-semibold capitalize transition-all border-b-2 -mb-px whitespace-nowrap ${
+              className={`flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-lg transition-all whitespace-nowrap ${
                 activeTab === tab
-                  ? 'border-blue-500 text-blue-400'
-                  : 'border-transparent text-gray-500 hover:text-gray-300'
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
+                  : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
               }`}
             >
-              {tab}
+              {icon}
+              {label}
             </button>
           ))}
         </div>

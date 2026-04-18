@@ -389,14 +389,15 @@ export default function CompetitionPage() {
               id={isLastQuestion ? 'submit-btn' : `next-q${qi}-btn`}
               onClick={handleNext}
               disabled={submitting}
-              className="btn-primary flex items-center gap-2 px-8 py-3"
+              className="group relative overflow-hidden flex items-center gap-2 px-8 py-3 font-bold text-sm rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-cyan-500 text-white transition-all duration-300 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
             >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               {submitting ? (
-                <><Loader2 className="w-4 h-4 animate-spin" /> {isLastQuestion ? 'Submitting...' : 'Saving...'}</>
+                <><Loader2 className="w-4 h-4 animate-spin relative z-10" /> <span className="relative z-10">{isLastQuestion ? 'Submitting...' : 'Saving...'}</span></>
               ) : isLastQuestion ? (
-                <><Send className="w-4 h-4" /> Submit Answers</>
+                <><Send className="w-4 h-4 relative z-10" /> <span className="relative z-10">Submit Answers</span></>
               ) : (
-                <>Next Question <ArrowRight className="w-4 h-4" /></>
+                <><span className="relative z-10">Next Question</span> <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" /></>
               )}
             </button>
           </div>

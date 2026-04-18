@@ -114,10 +114,11 @@ export default function GuidelinesPage() {
       <div className="w-full max-w-2xl animate-fade-in-up">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 badge badge-blue mb-4">
-            <span>Step 2 of 3</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[11px] font-bold text-blue-400 uppercase tracking-widest mb-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+            Step 2 of 3
           </div>
-          <h1 className="text-3xl font-extrabold text-white mb-2">Competition Guidelines</h1>
+          <h1 className="text-3xl font-black text-white mb-2 tracking-tight">Competition Guidelines</h1>
           <p className="text-gray-400 text-sm">Read carefully before starting. These rules are strictly enforced.</p>
         </div>
 
@@ -202,12 +203,13 @@ export default function GuidelinesPage() {
           id="start-competition-btn"
           onClick={handleStart}
           disabled={starting || !agreed}
-          className="btn-primary w-full flex items-center justify-center gap-3 py-4 text-base"
+          className="group relative overflow-hidden w-full flex items-center justify-center gap-3 py-4 text-base font-bold rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-cyan-500 text-white transition-all duration-300 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]"
         >
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
           {starting ? (
             <><Loader2 className="w-5 h-5 animate-spin" /> Starting Competition...</>
           ) : (
-            <><Maximize className="w-5 h-5" /> Start Competition (Fullscreen)</>
+            <><Maximize className="w-5 h-5 relative z-10" /> <span className="relative z-10">Launch Pitch Terminal</span><ChevronRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" /></>
           )}
         </button>
       </div>

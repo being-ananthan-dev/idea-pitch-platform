@@ -67,11 +67,12 @@ export default function DetailsPage() {
     <div className="auth-container">
       <div className="w-full max-w-lg animate-fade-in-up">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 badge badge-blue mb-4">
-            <span>Step 1 of 3</span>
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[11px] font-bold text-blue-400 uppercase tracking-widest mb-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+            Step 1 of 3
           </div>
-          <h1 className="text-3xl font-extrabold text-white mb-2">Your Details</h1>
+          <h1 className="text-3xl font-black text-white mb-2 tracking-tight">Your Details</h1>
           <p className="text-gray-400 text-sm">Confirm your info before entering the competition</p>
         </div>
 
@@ -148,12 +149,12 @@ export default function DetailsPage() {
               id="details-next-btn"
               type="submit"
               disabled={saving}
-              className="btn-primary w-full flex items-center justify-center gap-2"
+              className="btn-primary w-full flex items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg shadow-blue-500/20 group"
             >
               {saving ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</>
               ) : (
-                <>Next <ArrowRight className="w-4 h-4" /></>
+                <>Proceed to Guidelines <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></>
               )}
             </button>
           </form>

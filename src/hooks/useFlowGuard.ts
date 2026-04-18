@@ -26,12 +26,15 @@ interface UseFlowGuardOptions {
 export function useFlowGuard({ requiredStep, requirePhone = false }: UseFlowGuardOptions) {
   const { user, loading } = useAuth();
   const router = useRouter();
-  const checkedRef = useRef(false);
+  const lastCheckedUser = useRef<string | null | undefined>(undefined);
   const [submissionStatus, setSubmissionStatus] = useState<string | null>(null);
 
   const check = useCallback(async () => {
-    if (loading || checkedRef.current) return;
-    checkedRef.current = true;
+    if (loading) return;
+
+    const currentUserId = user ? user.uid : null;
+    if (lastCheckedUser.current === currentUserId) return;
+    lastCheckedUser.current = currentUserId;
 
     if (!user) {
       if (requiredStep !== 'login') router.replace('/login');

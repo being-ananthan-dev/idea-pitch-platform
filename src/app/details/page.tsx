@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useFlowGuard } from '@/hooks/useFlowGuard';
 import { getParticipant, createOrUpdateParticipant } from '@/lib/firestore';
-import { Loader2, User, Mail, Phone, ArrowRight, CheckCircle } from 'lucide-react';
+import { Loader2, User, Mail, Phone, ArrowRight, CheckCircle, UserCircle } from 'lucide-react';
 
 export default function DetailsPage() {
   const { user } = useAuth();

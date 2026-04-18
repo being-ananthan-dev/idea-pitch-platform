@@ -488,6 +488,46 @@ export default function AdminPage() {
           </div>
         )}
 
+        {/* ── Logs Tab ──────────────────────────────────────────────────── */}
+        {activeTab === 'logs' && (
+          <div className="animate-fade-in">
+            <div className="glass-card overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Participant</th>
+                      <th>Violation Type</th>
+                      <th>Timestamp</th>
+                      <th>Details</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {logs.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="text-center text-gray-600 py-10">No violations logged.</td>
+                      </tr>
+                    ) : (
+                      logs.map((log, idx) => (
+                        <tr key={idx}>
+                          <td>
+                            <p className="font-medium text-white text-sm">{log.name || log.uid.slice(0, 8)}</p>
+                            <p className="text-gray-500 text-xs">{log.uid.slice(0, 12)}...</p>
+                          </td>
+                          <td>
+                            <span className={`badge ${log.type === 'auto_submit' ? 'badge-red' : 'badge-yellow'}`}>
+                              {log.type.replace('_', ' ')}
+                            </span>
+                          </td>
+                          <td className="text-gray-400 text-xs">{formatTs(log.timestamp)}</td>
+                          <td className="text-gray-500 text-xs">{log.metadata || '—'}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         )}
 

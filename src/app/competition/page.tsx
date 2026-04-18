@@ -24,8 +24,6 @@ import { useModal } from '@/context/ModalContext';
 // Removed hardcoded QUESTIONS array — now fetched from Firestore config
 const DRAFT_KEY = (uid: string, qi: number) => `intellipitch_draft_${uid}_q${qi}`;
 
-const DRAFT_KEY = (uid: string, qi: number) => `intellipitch_draft_${uid}_q${qi}`;
-
 export default function CompetitionPage() {
   const { user } = useAuth();
   const router = useRouter();

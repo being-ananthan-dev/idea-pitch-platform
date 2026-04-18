@@ -51,7 +51,7 @@ export function useFlowGuard({ requiredStep, requirePhone = false }: UseFlowGuar
     ]);
 
     // Eventual consistency retry: If we just signed up, the doc might be 200ms away
-    if (!participant && requiredStep !== 'login') {
+    if (!participant) {
       await new Promise(r => setTimeout(r, 800));
       participant = await getParticipant(user.uid);
     }

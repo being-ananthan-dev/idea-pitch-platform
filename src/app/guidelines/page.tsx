@@ -78,7 +78,7 @@ export default function GuidelinesPage() {
         user.uid,
         participant.name,
         participant.email,
-        config.questionTimers
+        config.questions.map(q => q.timer)
       );
 
       // Request fullscreen

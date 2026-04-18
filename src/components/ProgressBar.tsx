@@ -10,7 +10,7 @@ export default function ProgressBar({ currentQuestion, total, labels }: Progress
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-3">
-        {QUESTION_LABELS.map((label, idx) => {
+        {labels.map((label, idx) => {
           const isDone = idx < currentQuestion;
           const isActive = idx === currentQuestion;
           const isFuture = idx > currentQuestion;

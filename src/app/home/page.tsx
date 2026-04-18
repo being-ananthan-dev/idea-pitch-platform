@@ -142,7 +142,7 @@ export default function HomePage() {
       {/* ════════════════════════════════════════════════════════
           HERO SECTION
       ════════════════════════════════════════════════════════ */}
-      <section className="main-container pt-20 pb-24">
+      <section className="main-container pt-28 pb-32 md:pt-40 md:pb-44">
         <div className="flex flex-col items-center text-center">
 
           {/* Left: Copy */}
@@ -166,7 +166,7 @@ export default function HomePage() {
             </div>
 
             {/* Subtext */}
-            <p className="text-lg text-gray-300 leading-relaxed w-full max-w-2xl px-2 sm:px-0 text-center">
+            <p className="text-xl text-gray-300 leading-relaxed w-full max-w-2xl px-2 sm:px-0 text-center opacity-90">
               Step into the high-stakes arena. Architect solutions to real-world problems under pressure — judged blind, timed to the millisecond.
             </p>
 
@@ -219,8 +219,8 @@ export default function HomePage() {
       {/* ════════════════════════════════════════════════════════
           STATS ROW
       ════════════════════════════════════════════════════════ */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-8 py-20">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+      <section className="max-w-7xl mx-auto px-4 sm:px-8 py-28 md:py-36">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <StatCard value="1,200+" label="Participants" icon={Users} color="bg-blue-500/10 text-blue-400" />
           <StatCard value="4" label="Evaluation Criteria" icon={Target} color="bg-cyan-500/10 text-cyan-400" />
           <StatCard value="₹10K" label="Total Prize Pool" icon={Trophy} color="bg-yellow-500/10 text-yellow-400" />
@@ -232,18 +232,18 @@ export default function HomePage() {
           FEATURES BENTO GRID
       ════════════════════════════════════════════════════════ */}
       <section className="max-w-7xl mx-auto px-4 sm:px-8 pb-24">
-        <div className="text-center mb-14 reveal">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-bold text-blue-300 uppercase tracking-widest mb-5">
+        <div className="text-center mb-20 reveal">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-bold text-blue-300 uppercase tracking-widest mb-6">
             <Sparkles className="w-3.5 h-3.5" />
             Platform Capabilities
           </div>
-          <h2 className="text-4xl md:text-5xl font-black leading-tight mb-4">
+          <h2 className="text-5xl md:text-6xl font-black leading-tight mb-6">
             Built for <span className="gradient-text">Precision.</span><br />Engineered for <span className="gradient-text">Fairness.</span>
           </h2>
-          <p className="text-gray-400 max-w-xl mx-auto">Every feature is designed to give every participant a level playing field.</p>
+          <p className="text-gray-400 max-w-xl mx-auto text-base">Every feature is designed to give every participant a level playing field.</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-5">
+        <div className="grid md:grid-cols-3 gap-8">
           {/* Large card */}
           <div className="md:col-span-2 glass-card p-10 reveal flex flex-col gap-5 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-72 h-72 bg-cyan-500/5 blur-[80px] rounded-full pointer-events-none" />
@@ -282,7 +282,7 @@ export default function HomePage() {
       {/* ════════════════════════════════════════════════════════
           HOW IT WORKS
       ════════════════════════════════════════════════════════ */}
-      <section className="border-t border-white/[0.06] py-24">
+      <section className="border-t border-white/[0.06] py-32 md:py-44">
         <div className="max-w-7xl mx-auto px-4 sm:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
 

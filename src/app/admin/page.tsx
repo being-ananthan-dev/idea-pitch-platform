@@ -209,7 +209,7 @@ export default function AdminPage() {
     <div className="min-h-[100dvh] bg-bg">
       {/* Navbar */}
       <nav className="border-b border-white/5 bg-black/30 backdrop-blur-md sticky top-0 z-10 w-full overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between h-16">
+        <div className="max-w-[1600px] mx-auto px-6 sm:px-12 flex items-center justify-between h-20">
           <div className="flex items-center gap-3">
             <span className="text-lg">💡</span>
             <span className="font-bold gradient-text">IntelliPitch</span>
@@ -232,7 +232,7 @@ export default function AdminPage() {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-8 py-8 md:py-12 w-full overflow-hidden">
+      <main className="max-w-[1600px] mx-auto px-6 sm:px-12 py-12 md:py-20 w-full overflow-hidden">
         {/* Tabs */}
         <div className="flex gap-2 mb-8 border-b border-white/10 pb-0 overflow-x-auto scrollbar-none">
           {(['dashboard', 'submissions', 'logs', 'competition'] as const).map((tab) => (
@@ -255,40 +255,40 @@ export default function AdminPage() {
         {activeTab === 'dashboard' && (
           <div className="space-y-8 animate-fade-in">
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
               {[
-                { icon: <Users className="w-5 h-5 text-blue-400" />, label: 'Total Participants', value: totalParticipants, color: 'blue' },
-                { icon: <FileText className="w-5 h-5 text-green-400" />, label: 'Total Submissions', value: totalSubmissions, color: 'green' },
-                { icon: <Activity className="w-5 h-5 text-cyan-400" />, label: 'Active Now', value: activeUsers, color: 'cyan' },
-                { icon: <AlertTriangle className="w-5 h-5 text-amber-400" />, label: 'Violations', value: totalViolations, color: 'amber' },
+                { icon: <Users className="w-6 h-6 text-blue-400" />, label: 'Total Participants', value: totalParticipants, color: 'blue' },
+                { icon: <FileText className="w-6 h-6 text-green-400" />, label: 'Total Submissions', value: totalSubmissions, color: 'green' },
+                { icon: <Activity className="w-6 h-6 text-cyan-400" />, label: 'Active Now', value: activeUsers, color: 'cyan' },
+                { icon: <AlertTriangle className="w-6 h-6 text-amber-400" />, label: 'Violations', value: totalViolations, color: 'amber' },
               ].map((stat) => (
-                <div key={stat.label} className="glass-card p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center">
-                      {stat.icon}
-                    </div>
+                <div key={stat.label} className="glass-card p-10 flex flex-col items-center text-center gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center">
+                    {stat.icon}
                   </div>
-                  <p className="text-3xl font-extrabold text-white">{stat.value}</p>
-                  <p className="text-gray-500 text-xs mt-1">{stat.label}</p>
+                  <div>
+                    <p className="text-4xl font-black text-white">{stat.value}</p>
+                    <p className="text-gray-500 text-sm font-medium mt-1 uppercase tracking-widest">{stat.label}</p>
+                  </div>
                 </div>
               ))}
             </div>
 
             {/* Event Controls */}
             {config && (
-              <div className="glass-card p-6">
-                <h2 className="font-bold text-white mb-5 flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-blue-400" /> Event Controls
+              <div className="glass-card p-10 md:p-12 mb-12">
+                <h2 className="text-xl font-bold text-white mb-8 flex items-center gap-3">
+                  <Shield className="w-5 h-5 text-blue-400" /> Administrative Controls
                 </h2>
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div className="grid sm:grid-cols-2 gap-8">
                   {[
-                    { key: 'eventLive' as const, label: 'Event Live', desc: 'Allow participants to start the competition' },
-                    { key: 'allowSubmission' as const, label: 'Allow Submissions', desc: 'Enable or disable new submissions' },
+                    { key: 'eventLive' as const, label: 'Event Live', desc: 'Control whether participants can start their pitch session.' },
+                    { key: 'allowSubmission' as const, label: 'Finalizing', desc: 'Global switch to enable or disable final answer submissions.' },
                   ].map(({ key, label, desc }) => (
-                    <div key={key} className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5">
+                    <div key={key} className="flex items-center justify-between p-6 rounded-2xl bg-white/5 border border-white/5 transition-colors hover:border-white/10">
                       <div>
-                        <p className="font-semibold text-white text-sm">{label}</p>
-                        <p className="text-gray-500 text-xs mt-0.5">{desc}</p>
+                        <p className="font-bold text-white text-lg">{label}</p>
+                        <p className="text-gray-500 text-sm mt-1 max-w-[240px] leading-relaxed">{desc}</p>
                       </div>
                       <button
                         id={`toggle-${key}`}
@@ -372,18 +372,18 @@ export default function AdminPage() {
         {/* ── Submissions Tab ───────────────────────────────────────────── */}
         {activeTab === 'submissions' && (
           <div className="space-y-5 animate-fade-in">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-10">
               {/* Filters */}
-              <div className="flex gap-2">
+              <div className="flex flex-wrap items-center gap-3">
                 {(['all', 'completed', 'suspicious'] as Filter[]).map((f) => (
                   <button
                     key={f}
                     id={`filter-${f}`}
                     onClick={() => setFilter(f)}
-                    className={`px-4 py-1.5 rounded-lg text-sm font-medium capitalize transition-all ${
+                    className={`px-6 py-2.5 rounded-full text-sm font-semibold capitalize transition-all ${
                       filter === f
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-white/5 text-gray-400 hover:text-white'
+                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
+                        : 'bg-white/5 text-gray-400 hover:text-white border border-white/5'
                     }`}
                   >
                     {f}
@@ -393,9 +393,9 @@ export default function AdminPage() {
               <button
                 id="export-csv-btn"
                 onClick={() => exportCSV(filteredSubmissions, participants)}
-                className="btn-secondary flex items-center gap-2 py-1.5 px-4 text-sm"
+                className="btn-secondary flex items-center gap-2.5 py-2.5 px-6 text-sm rounded-full"
               >
-                <Download className="w-4 h-4" /> Export CSV
+                <Download className="w-5 h-5 text-gray-400" /> Export CSV (Excel)
               </button>
             </div>
 
@@ -534,32 +534,32 @@ export default function AdminPage() {
         {/* ── Competition Tab ───────────────────────────────────────────── */}
         {activeTab === 'competition' && config && (
           <div className="space-y-6 animate-fade-in">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between py-6">
               <div>
-                <h2 className="text-xl font-bold text-white">Competition Structure</h2>
-                <p className="text-gray-500 text-sm">Manage questions, instructions, and time limits.</p>
+                <h2 className="text-2xl font-black text-white tracking-tight">Competition Structure</h2>
+                <p className="text-gray-500 text-sm mt-1">Manage questions, instructions, and time limits for the live event.</p>
               </div>
               <button
                 onClick={saveFullConfig}
                 disabled={configSaving}
-                className="btn-primary flex items-center gap-2 py-2 px-6"
+                className="btn-primary flex items-center gap-3 py-3 px-8 shadow-xl shadow-blue-500/20"
               >
-                {configSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                Save Changes
+                {configSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                Save All Changes
               </button>
             </div>
 
-            <div className="grid gap-6">
+            <div className="grid gap-8">
               {config.questions.map((q, idx) => (
-                <div key={idx} className="glass-card p-6 relative group">
-                  <div className="absolute top-6 right-6 flex items-center gap-2">
-                    <span className="badge badge-blue text-xs uppercase tracking-widest">Question {idx + 1}</span>
+                <div key={idx} className="glass-card p-10 relative group border-white/5 hover:border-white/10">
+                  <div className="absolute top-10 right-10 flex items-center gap-3">
+                    <span className="badge badge-blue px-3 py-1 text-[10px] uppercase tracking-[0.2em] font-black">Question {idx + 1}</span>
                     <button
                       onClick={() => deleteQuestion(idx)}
-                      className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+                      className="p-2.5 text-gray-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all"
                       title="Delete Question"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-5 h-5" />
                     </button>
                   </div>
 

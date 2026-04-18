@@ -67,16 +67,16 @@ export default function DetailsPage() {
     <div className="auth-container">
       <div className="w-full max-w-lg animate-fade-in-up">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 badge badge-blue mb-4">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 badge badge-blue mb-6 px-4 py-1.5 uppercase tracking-widest font-bold text-[10px]">
             <span>Step 1 of 3</span>
           </div>
-          <h1 className="text-3xl font-extrabold text-white mb-2">Your Details</h1>
-          <p className="text-gray-400 text-sm">Confirm your info before entering the competition</p>
+          <h1 className="text-4xl font-black text-white mb-3 tracking-tight">Your Details</h1>
+          <p className="text-gray-400 text-base max-w-md mx-auto leading-relaxed">Confirm your administrative information before entering the competition arena.</p>
         </div>
 
-        <div className="glass-card p-8">
-          <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="glass-card p-10 md:p-14">
+          <form onSubmit={handleSubmit} className="space-y-8">
             {/* Name */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">
@@ -139,21 +139,21 @@ export default function DetailsPage() {
             )}
 
             {/* Info box */}
-            <div className="p-4 rounded-xl bg-blue-950/30 border border-blue-500/20 text-xs text-gray-400 leading-relaxed">
-              <CheckCircle className="w-4 h-4 text-blue-400 inline mr-1.5 -mt-0.5" />
-              Your details are stored securely and used only for competition purposes. You can edit them before starting.
+            <div className="p-5 rounded-[20px] bg-blue-950/20 border border-blue-500/20 text-xs text-gray-400 leading-relaxed italic">
+              <CheckCircle className="w-4 h-4 text-blue-400 inline mr-2 -mt-0.5" />
+              Your details are stored securely. You can edit them anytime before starting the actual timer.
             </div>
 
             <button
               id="details-next-btn"
               type="submit"
               disabled={saving}
-              className="btn-primary w-full flex items-center justify-center gap-2"
+              className="btn-primary w-full flex items-center justify-center gap-3 py-4 text-base shadow-xl shadow-blue-500/20 group"
             >
               {saving ? (
-                <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</>
+                <><Loader2 className="w-5 h-5 animate-spin" /> Saving...</>
               ) : (
-                <>Next <ArrowRight className="w-4 h-4" /></>
+                <>Proceed to Guidelines <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></>
               )}
             </button>
           </form>

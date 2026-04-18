@@ -40,7 +40,7 @@ function FeatureCard({ icon: Icon, iconBg, title, desc, delay = '0s' }: {
   icon: React.ElementType; iconBg: string; title: string; desc: string; delay?: string;
 }) {
   return (
-    <div className="glass-card p-10 flex flex-col gap-6 reveal" style={{ transitionDelay: delay }}>
+    <div className="glass-card p-8 flex flex-col gap-5 reveal" style={{ transitionDelay: delay }}>
       <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10 ${iconBg}`}>
         <Icon className="w-7 h-7" />
       </div>
@@ -219,8 +219,8 @@ export default function HomePage() {
       {/* ════════════════════════════════════════════════════════
           STATS ROW
       ════════════════════════════════════════════════════════ */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-12 py-32">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-8 py-20">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
           <StatCard value="1,200+" label="Participants" icon={Users} color="bg-blue-500/10 text-blue-400" />
           <StatCard value="4" label="Evaluation Criteria" icon={Target} color="bg-cyan-500/10 text-cyan-400" />
           <StatCard value="₹10K" label="Total Prize Pool" icon={Trophy} color="bg-yellow-500/10 text-yellow-400" />
@@ -232,18 +232,18 @@ export default function HomePage() {
           FEATURES BENTO GRID
       ════════════════════════════════════════════════════════ */}
       <section className="max-w-7xl mx-auto px-4 sm:px-8 pb-24">
-        <div className="text-center mb-20 reveal">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-bold text-blue-300 uppercase tracking-widest mb-6">
+        <div className="text-center mb-14 reveal">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-bold text-blue-300 uppercase tracking-widest mb-5">
             <Sparkles className="w-3.5 h-3.5" />
             Platform Capabilities
           </div>
-          <h2 className="text-4xl md:text-5xl font-black leading-tight mb-6">
+          <h2 className="text-4xl md:text-5xl font-black leading-tight mb-4">
             Built for <span className="gradient-text">Precision.</span><br />Engineered for <span className="gradient-text">Fairness.</span>
           </h2>
-          <p className="text-gray-400 max-w-xl mx-auto text-lg">Every feature is designed to give every participant a level playing field.</p>
+          <p className="text-gray-400 max-w-xl mx-auto">Every feature is designed to give every participant a level playing field.</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-5">
           {/* Large card */}
           <div className="md:col-span-2 glass-card p-10 reveal flex flex-col gap-5 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-72 h-72 bg-cyan-500/5 blur-[80px] rounded-full pointer-events-none" />

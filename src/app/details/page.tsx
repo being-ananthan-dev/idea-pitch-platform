@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useFlowGuard } from '@/hooks/useFlowGuard';
 import { getParticipant, createOrUpdateParticipant } from '@/lib/firestore';
-import { Loader2, User, Mail, Phone, ArrowRight, CheckCircle, UserCircle } from 'lucide-react';
+import { Loader2, User, Mail, Phone, ArrowRight, CheckCircle } from 'lucide-react';
 
 export default function DetailsPage() {
   const { user } = useAuth();
@@ -64,20 +64,19 @@ export default function DetailsPage() {
   }
 
   return (
-    <main className="auth-container py-12">
-      <div className="max-w-3xl w-full reveal animate-fade-in-up">
+    <div className="auth-container">
+      <div className="w-full max-w-lg animate-fade-in-up">
         {/* Header */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-bold text-blue-300 uppercase tracking-widest mb-6">
-            <UserCircle className="w-3.5 h-3.5" />
-            Participant Profile
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 badge badge-blue mb-4">
+            <span>Step 1 of 3</span>
           </div>
-          <h1 className="text-4xl font-black text-white mb-4">Complete your Registration</h1>
-          <p className="text-gray-400">Please provide your details to enter the IntelliPitch arena.</p>
+          <h1 className="text-3xl font-extrabold text-white mb-2">Your Details</h1>
+          <p className="text-gray-400 text-sm">Confirm your info before entering the competition</p>
         </div>
 
-        <div className="glass-card p-8 md:p-12 shadow-2xl relative overflow-hidden group">
-          <form onSubmit={handleSubmit} className="space-y-8">
+        <div className="glass-card p-8">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Name */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">
@@ -140,26 +139,26 @@ export default function DetailsPage() {
             )}
 
             {/* Info box */}
-            <div className="p-5 rounded-[20px] bg-blue-950/20 border border-blue-500/20 text-xs text-gray-400 leading-relaxed italic">
-              <CheckCircle className="w-4 h-4 text-blue-400 inline mr-2 -mt-0.5" />
-              Your details are stored securely. You can edit them anytime before starting the actual timer.
+            <div className="p-4 rounded-xl bg-blue-950/30 border border-blue-500/20 text-xs text-gray-400 leading-relaxed">
+              <CheckCircle className="w-4 h-4 text-blue-400 inline mr-1.5 -mt-0.5" />
+              Your details are stored securely and used only for competition purposes. You can edit them before starting.
             </div>
 
             <button
               id="details-next-btn"
               type="submit"
               disabled={saving}
-              className="btn-primary w-full flex items-center justify-center gap-3 py-4 text-base shadow-xl shadow-blue-500/20 group"
+              className="btn-primary w-full flex items-center justify-center gap-2"
             >
               {saving ? (
-                <><Loader2 className="w-5 h-5 animate-spin" /> Saving...</>
+                <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</>
               ) : (
-                <>Proceed to Guidelines <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></>
+                <>Next <ArrowRight className="w-4 h-4" /></>
               )}
             </button>
           </form>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

@@ -294,8 +294,8 @@ export default function CompetitionPage() {
       )}
 
       {/* Top Bar */}
-      <header className="border-b border-white/5 bg-black/30 backdrop-blur-md px-4 sm:px-12 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between gap-6">
+      <header className="border-b border-white/5 bg-black/30 backdrop-blur-md px-4 sm:px-8 py-3">
+        <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
           {/* Logo */}
           <div className="flex items-center gap-2 shrink-0">
             <span className="text-lg">💡</span>
@@ -333,7 +333,7 @@ export default function CompetitionPage() {
         </div>
       </header>
 
-      <main className="flex-1 main-container py-8 md:py-16 flex flex-col gap-10 overflow-hidden">
+      <main className="flex-1 main-container py-6 md:py-10 flex flex-col gap-6 overflow-hidden">
         {/* Progress */}
         <div className="animate-fade-in">
           <ProgressBar 
@@ -344,7 +344,7 @@ export default function CompetitionPage() {
         </div>
 
         {/* Question Card */}
-        <div className="glass-card p-6 md:p-12 animate-fade-in-up flex-1 flex flex-col gap-8 min-h-0">
+        <div className="glass-card p-6 md:p-8 animate-fade-in-up flex-1 flex flex-col gap-5 min-h-0">
           {/* Question Header */}
           <div className="shrink-0">
             <div className="flex items-center gap-2 mb-2">
@@ -369,7 +369,7 @@ export default function CompetitionPage() {
               onChange={handleAnswerChange}
               disabled={submitting}
               placeholder={`Start typing your answer here...`}
-              className="input-field resize-none flex-1 leading-relaxed text-lg p-6"
+              className="input-field resize-none flex-1 leading-relaxed text-base"
               style={{ fontFamily: 'var(--font-inter)' }}
             />
             <div className="shrink-0 mt-2">

@@ -6,10 +6,12 @@ import { useAuth } from '@/context/AuthContext';
 import { getSubmission } from '@/lib/firestore';
 import { Submission } from '@/types';
 import { Loader2, CheckCircle, Home, Shield, Clock } from 'lucide-react';
+import { useModal } from '@/context/ModalContext';
 
 export default function ThankYouPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
+  const { showModal } = useModal();
   const [submission, setSubmission] = useState<Submission | null>(null);
   const [loading, setLoading] = useState(true);
 

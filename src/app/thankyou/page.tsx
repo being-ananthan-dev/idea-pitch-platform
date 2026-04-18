@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { getSubmission } from '@/lib/firestore';
-import { Submission } from '@/types';
+import { getSubmission, getConfig } from '@/lib/firestore';
+import { Submission, Config } from '@/types';
 import { Loader2, CheckCircle, Home, Shield, Clock } from 'lucide-react';
 import { useModal } from '@/context/ModalContext';
 
@@ -13,6 +13,7 @@ export default function ThankYouPage() {
   const router = useRouter();
   const { showModal } = useModal();
   const [submission, setSubmission] = useState<Submission | null>(null);
+  const [config, setConfig] = useState<Config | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,11 +22,13 @@ export default function ThankYouPage() {
 
     const load = async () => {
       try {
-        const sub = await getSubmission(user.uid);
+        const [sub, cfg] = await Promise.all([getSubmission(user.uid), getConfig()]);
+        
         if (!sub || (sub.status !== 'submitted' && sub.status !== 'locked')) {
           router.replace('/'); return;
         }
         setSubmission(sub);
+        setConfig(cfg);
         setLoading(false);
       } catch (err) {
         showModal({
@@ -110,7 +113,9 @@ export default function ThankYouPage() {
             {/* Answers */}
             <div className="text-center p-3 rounded-xl bg-white/5">
               <CheckCircle className="w-5 h-5 mx-auto mb-1 text-blue-400" />
-              <p className="text-2xl font-extrabold text-blue-400">{answeredCount}/3</p>
+              <p className="text-2xl font-extrabold text-blue-400">
+                {answeredCount}/{config?.questions?.length || 0}
+              </p>
               <p className="text-xs text-gray-500 mt-0.5">Answered</p>
             </div>
 
@@ -123,14 +128,14 @@ export default function ThankYouPage() {
           </div>
 
           {/* Answers preview */}
-          {submission?.answers && submission.answers.length > 0 && (
+          {submission?.answers && submission.answers.length > 0 && config && (
             <div className="space-y-3">
-              {['Problem Statement', 'Proposed Solution', 'Impact & Innovation'].map((title, idx) => {
+              {config.questions.map((q, idx) => {
                 const ans = submission.answers.find((a) => a.questionIndex === idx);
                 return (
                   <div key={idx} className="p-3 rounded-xl bg-white/5 border border-white/5">
                     <div className="flex justify-between items-center mb-1">
-                      <p className="text-xs font-semibold text-gray-300">Q{idx + 1}: {title}</p>
+                      <p className="text-xs font-semibold text-gray-300">Q{idx + 1}: {q.title}</p>
                       {ans && (
                         <span className="badge badge-blue text-xs">{ans.wordCount} words</span>
                       )}

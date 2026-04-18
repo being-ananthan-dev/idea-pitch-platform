@@ -1,13 +1,12 @@
 'use client';
 
 interface ProgressBarProps {
-  currentQuestion: number; // 0, 1, 2
+  currentQuestion: number; 
   total: number;
+  labels: string[];
 }
 
-const QUESTION_LABELS = ['Problem Statement', 'Proposed Solution', 'Impact & Innovation'];
-
-export default function ProgressBar({ currentQuestion, total }: ProgressBarProps) {
+export default function ProgressBar({ currentQuestion, total, labels }: ProgressBarProps) {
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-3">

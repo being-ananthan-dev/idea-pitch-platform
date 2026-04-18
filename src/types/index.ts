@@ -58,10 +58,17 @@ export interface ViolationLog {
   metadata?: string;
 }
 
+export interface QuestionConfig {
+  title: string;
+  prompt: string;
+  emoji: string;
+  timer: number; // in seconds
+}
+
 export interface Config {
   eventLive: boolean;
   allowSubmission: boolean;
-  questionTimers: number[]; // [120, 120, 180]
+  questions: QuestionConfig[];
   maxWords: number; // 350
   minWords: number; // 30
 }

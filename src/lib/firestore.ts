@@ -267,12 +267,33 @@ export async function getConfig(): Promise<Config> {
   const ref = doc(db(), 'config', 'main');
   const snap = await getDoc(ref);
   if (snap.exists()) return snap.data() as Config;
+  
+  // Default seeding if nothing in Firestore yet
   return {
     eventLive: true,
     allowSubmission: true,
-    questionTimers: [120, 120, 180],
     maxWords: 350,
     minWords: 30,
+    questions: [
+      {
+        title: 'Problem Statement',
+        prompt: 'Describe the problem you are trying to solve. What is the pain point? Who is affected, and how significantly?',
+        emoji: '🧩',
+        timer: 120,
+      },
+      {
+        title: 'Proposed Solution',
+        prompt: 'Explain your proposed solution in detail. How does it address the problem? What technology, methodology, or innovation does it leverage?',
+        emoji: '💡',
+        timer: 120,
+      },
+      {
+        title: 'Impact & Innovation',
+        prompt: 'What makes your idea innovative? Describe the potential impact — social, economic, environmental.',
+        emoji: '🌍',
+        timer: 180,
+      },
+    ],
   };
 }
 
@@ -282,14 +303,34 @@ export async function updateConfig(data: Partial<Config>): Promise<void> {
   if (snap.exists()) {
     await updateDoc(ref, data);
   } else {
-    await setDoc(ref, {
+    // Initial creation logic
+    const base: Config = {
       eventLive: true,
       allowSubmission: true,
-      questionTimers: [120, 120, 180],
       maxWords: 350,
       minWords: 30,
-      ...data,
-    });
+      questions: [
+        {
+          title: 'Problem Statement',
+          prompt: 'Describe the problem you are trying to solve.',
+          emoji: '🧩',
+          timer: 120,
+        },
+        {
+          title: 'Proposed Solution',
+          prompt: 'Explain your proposed solution in detail.',
+          emoji: '💡',
+          timer: 120,
+        },
+        {
+          title: 'Impact & Innovation',
+          prompt: 'What makes your idea innovative?',
+          emoji: '🌍',
+          timer: 180,
+        },
+      ],
+    };
+    await setDoc(ref, { ...base, ...data });
   }
 }
 

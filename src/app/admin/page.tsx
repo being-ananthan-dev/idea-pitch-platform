@@ -15,7 +15,8 @@ import { Submission, Participant, ViolationLog, Config } from '@/types';
 import {
   Loader2, Users, FileText, Shield, AlertTriangle,
   Download, ToggleLeft, ToggleRight, RefreshCw,
-  Eye, Activity, ChevronDown, LogOut
+  Eye, Activity, ChevronDown, LogOut, Settings,
+  Clock, Trash2, Plus, Save, Trophy
 } from 'lucide-react';
 
 type Filter = 'all' | 'completed' | 'suspicious';
@@ -71,7 +72,7 @@ export default function AdminPage() {
   const [config, setConfig] = useState<Config | null>(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Filter>('all');
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'submissions' | 'logs'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'submissions' | 'logs' | 'competition'>('dashboard');
   const [refreshing, setRefreshing] = useState(false);
   const [configSaving, setConfigSaving] = useState(false);
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
@@ -126,6 +127,38 @@ export default function AdminPage() {
     await updateConfig({ [key]: updated[key as keyof Config] });
     setConfig(updated);
     setConfigSaving(false);
+  };
+
+  const updateQuestion = (index: number, field: string, value: any) => {
+    if (!config) return;
+    const newQuestions = [...config.questions];
+    newQuestions[index] = { ...newQuestions[index], [field]: value };
+    setConfig({ ...config, questions: newQuestions });
+  };
+
+  const addQuestion = () => {
+    if (!config) return;
+    const newQuestions = [...config.questions, {
+      title: 'New Question',
+      prompt: 'Enter question instructions here...',
+      emoji: '📝',
+      timer: 120
+    }];
+    setConfig({ ...config, questions: newQuestions });
+  };
+
+  const deleteQuestion = (index: number) => {
+    if (!config || config.questions.length <= 1) return;
+    const newQuestions = config.questions.filter((_, i) => i !== index);
+    setConfig({ ...config, questions: newQuestions });
+  };
+
+  const saveFullConfig = async () => {
+    if (!config) return;
+    setConfigSaving(true);
+    await updateConfig(config);
+    setConfigSaving(false);
+    alert('Configuration saved successfully!');
   };
 
   // ─── Auth / Loading states ────────────────────────────────────────────────
@@ -201,13 +234,13 @@ export default function AdminPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-8 py-8 md:py-12 w-full overflow-hidden">
         {/* Tabs */}
-        <div className="flex gap-2 mb-8 border-b border-white/10 pb-0">
-          {(['dashboard', 'submissions', 'logs'] as const).map((tab) => (
+        <div className="flex gap-2 mb-8 border-b border-white/10 pb-0 overflow-x-auto scrollbar-none">
+          {(['dashboard', 'submissions', 'logs', 'competition'] as const).map((tab) => (
             <button
               key={tab}
               id={`admin-tab-${tab}`}
               onClick={() => setActiveTab(tab)}
-              className={`px-5 py-3 text-sm font-semibold capitalize transition-all border-b-2 -mb-px ${
+              className={`px-5 py-3 text-sm font-semibold capitalize transition-all border-b-2 -mb-px whitespace-nowrap ${
                 activeTab === tab
                   ? 'border-blue-500 text-blue-400'
                   : 'border-transparent text-gray-500 hover:text-gray-300'
@@ -455,44 +488,127 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* ── Logs Tab ──────────────────────────────────────────────────── */}
-        {activeTab === 'logs' && (
-          <div className="animate-fade-in">
-            <div className="glass-card overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Participant</th>
-                      <th>Violation Type</th>
-                      <th>Timestamp</th>
-                      <th>Details</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {logs.length === 0 ? (
-                      <tr>
-                        <td colSpan={4} className="text-center text-gray-600 py-10">No violations logged.</td>
-                      </tr>
-                    ) : (
-                      logs.map((log, idx) => (
-                        <tr key={idx}>
-                          <td>
-                            <p className="font-medium text-white text-sm">{log.name || log.uid.slice(0, 8)}</p>
-                            <p className="text-gray-500 text-xs">{log.uid.slice(0, 12)}...</p>
-                          </td>
-                          <td>
-                            <span className={`badge ${log.type === 'auto_submit' ? 'badge-red' : 'badge-yellow'}`}>
-                              {log.type.replace('_', ' ')}
-                            </span>
-                          </td>
-                          <td className="text-gray-400 text-xs">{formatTs(log.timestamp)}</td>
-                          <td className="text-gray-500 text-xs">{log.metadata || '—'}</td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
+          </div>
+        )}
+
+        {/* ── Competition Tab ───────────────────────────────────────────── */}
+        {activeTab === 'competition' && config && (
+          <div className="space-y-6 animate-fade-in">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-white">Competition Structure</h2>
+                <p className="text-gray-500 text-sm">Manage questions, instructions, and time limits.</p>
+              </div>
+              <button
+                onClick={saveFullConfig}
+                disabled={configSaving}
+                className="btn-primary flex items-center gap-2 py-2 px-6"
+              >
+                {configSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                Save Changes
+              </button>
+            </div>
+
+            <div className="grid gap-6">
+              {config.questions.map((q, idx) => (
+                <div key={idx} className="glass-card p-6 relative group">
+                  <div className="absolute top-6 right-6 flex items-center gap-2">
+                    <span className="badge badge-blue text-xs uppercase tracking-widest">Question {idx + 1}</span>
+                    <button
+                      onClick={() => deleteQuestion(idx)}
+                      className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+                      title="Delete Question"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <div className="grid md:grid-cols-4 gap-6">
+                    {/* Emoji & Title */}
+                    <div className="md:col-span-1 space-y-4">
+                      <div>
+                        <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Emoji</label>
+                        <input
+                          type="text"
+                          value={q.emoji}
+                          onChange={(e) => updateQuestion(idx, 'emoji', e.target.value)}
+                          className="input-field text-center text-xl w-16"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Timer (Sec)</label>
+                        <div className="relative">
+                          <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                          <input
+                            type="number"
+                            value={q.timer}
+                            onChange={(e) => updateQuestion(idx, 'timer', parseInt(e.target.value))}
+                            className="input-field pl-10"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Text Fields */}
+                    <div className="md:col-span-3 space-y-4">
+                      <div>
+                        <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Question Title</label>
+                        <input
+                          type="text"
+                          value={q.title}
+                          onChange={(e) => updateQuestion(idx, 'title', e.target.value)}
+                          className="input-field font-bold"
+                          placeholder="e.g., Problem Statement"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Instructional Prompt</label>
+                        <textarea
+                          value={q.prompt}
+                          onChange={(e) => updateQuestion(idx, 'prompt', e.target.value)}
+                          rows={3}
+                          className="input-field resize-none text-sm leading-relaxed"
+                          placeholder="What should the participant write about?"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              <button
+                onClick={addQuestion}
+                className="w-full py-6 border-2 border-dashed border-white/5 rounded-2xl flex items-center justify-center gap-2 text-gray-500 hover:text-blue-400 hover:border-blue-400/20 hover:bg-blue-400/5 transition-all group"
+              >
+                <Plus className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <span className="font-semibold">Add New Question</span>
+              </button>
+            </div>
+
+            {/* Global Word Limits */}
+            <div className="glass-card p-6 mt-8">
+              <h3 className="font-bold text-white mb-4 flex items-center gap-2 text-sm uppercase tracking-wider">
+                <Settings className="w-4 h-4 text-gray-400" /> Submission Rules
+              </h3>
+              <div className="grid sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Minimum Words</label>
+                  <input
+                    type="number"
+                    value={config.minWords}
+                    onChange={(e) => setConfig({ ...config, minWords: parseInt(e.target.value) })}
+                    className="input-field"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Maximum Words</label>
+                  <input
+                    type="number"
+                    value={config.maxWords}
+                    onChange={(e) => setConfig({ ...config, maxWords: parseInt(e.target.value) })}
+                    className="input-field"
+                  />
+                </div>
               </div>
             </div>
           </div>

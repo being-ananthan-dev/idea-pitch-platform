@@ -21,29 +21,8 @@ import { useAntiCheat } from '@/hooks/useAntiCheat';
 import { Loader2, Save, ArrowRight, Send } from 'lucide-react';
 import { useModal } from '@/context/ModalContext';
 
-const QUESTIONS = [
-  {
-    index: 0,
-    title: 'Problem Statement',
-    prompt:
-      'Describe the problem you are trying to solve. What is the pain point? Who is affected, and how significantly? Make it specific and data-driven if possible.',
-    emoji: '🧩',
-  },
-  {
-    index: 1,
-    title: 'Proposed Solution',
-    prompt:
-      'Explain your proposed solution in detail. How does it address the problem? What technology, methodology, or innovation does it leverage? How is it better than existing solutions?',
-    emoji: '💡',
-  },
-  {
-    index: 2,
-    title: 'Impact & Innovation',
-    prompt:
-      'What makes your idea innovative? Describe the potential impact — social, economic, environmental. Who are the beneficiaries, and what is the scale of impact you envision?',
-    emoji: '🌍',
-  },
-];
+// Removed hardcoded QUESTIONS array — now fetched from Firestore config
+const DRAFT_KEY = (uid: string, qi: number) => `intellipitch_draft_${uid}_q${qi}`;
 
 const DRAFT_KEY = (uid: string, qi: number) => `intellipitch_draft_${uid}_q${qi}`;
 
@@ -202,8 +181,9 @@ export default function CompetitionPage() {
     const qi = sub.questionIndex;
     const draft = answerRef.current;
     const wc = countWords(draft);
+    const totalQ = configRef.current.questions.length;
 
-    if (qi < QUESTIONS.length - 1) {
+    if (qi < totalQ - 1) {
       // Advance to next question
       const nextQi = qi + 1;
       await advanceQuestion(user.uid, nextQi, draft, wc);
@@ -234,6 +214,7 @@ export default function CompetitionPage() {
     const draft = answerRef.current;
     const wc = countWords(draft);
     const min = config.minWords ?? 30;
+    const totalQ = config.questions.length;
 
     if (wc < min) {
       setMinWordError(`Please write at least ${min} words before proceeding. Current: ${wc} words.`);
@@ -243,7 +224,7 @@ export default function CompetitionPage() {
     setSubmitting(true);
     submittingRef.current = true;
 
-    if (qi < QUESTIONS.length - 1) {
+    if (qi < totalQ - 1) {
       const nextQi = qi + 1;
       await advanceQuestion(user.uid, nextQi, draft, wc);
       localStorage.removeItem(DRAFT_KEY(user.uid, qi));
@@ -293,12 +274,14 @@ export default function CompetitionPage() {
   }
 
   const qi = submission.questionIndex;
-  const question = QUESTIONS[qi];
-  const allowedTime = config.questionTimers[qi] ?? 120;
-  const isLastQuestion = qi === QUESTIONS.length - 1;
+  const question = config.questions[qi];
+  const allowedTime = question?.timer ?? 120;
+  const isLastQuestion = qi === config.questions.length - 1;
   const wc = countWords(answer);
   const integrityScore = Math.max(0, 100 - tabSwitchCount * 10 - fullscreenExitCount * 15);
   const totalViolations = tabSwitchCount + fullscreenExitCount;
+
+  if (!question) return null; // Safety check
 
   return (
     <div className="h-[100dvh] bg-bg flex flex-col overflow-hidden">
@@ -355,7 +338,11 @@ export default function CompetitionPage() {
       <main className="flex-1 main-container py-6 md:py-10 flex flex-col gap-6 overflow-hidden">
         {/* Progress */}
         <div className="animate-fade-in">
-          <ProgressBar currentQuestion={qi} total={QUESTIONS.length} />
+          <ProgressBar 
+            currentQuestion={qi} 
+            total={config.questions.length} 
+            labels={config.questions.map(q => q.title)}
+          />
         </div>
 
         {/* Question Card */}
@@ -364,7 +351,7 @@ export default function CompetitionPage() {
           <div className="shrink-0">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xl">{question.emoji}</span>
-              <span className="badge badge-blue">Question {qi + 1} of {QUESTIONS.length}</span>
+              <span className="badge badge-blue">Question {qi + 1} of {config.questions.length}</span>
             </div>
             <h2 className="text-lg font-bold text-white mb-2">{question.title}</h2>
             <div className="text-gray-300 leading-relaxed text-sm bg-white/5 rounded-xl p-3 border border-white/5 max-h-[100px] overflow-y-auto">

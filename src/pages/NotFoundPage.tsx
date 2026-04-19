@@ -5,12 +5,12 @@ export default function NotFoundPage() {
     <div className="min-h-screen bg-[#0A0F1E] flex flex-col items-center justify-center text-white p-4">
       <div className="text-center">
         <div
-          className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mx-auto mb-6"
+          className="w-12 h-12 rounded-xl inline-flex items-center justify-center text-2xl mb-6 shadow-lg"
           style={{ background: 'linear-gradient(135deg, #3B82F6, #06B6D4)' }}
         >
           💡
         </div>
-        <h1 className="text-6xl font-extrabold mb-4" style={{
+        <h1 className="text-5xl font-extrabold mb-4" style={{
           background: 'linear-gradient(135deg, #3B82F6, #06B6D4)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',

@@ -32,7 +32,7 @@ export default function LoginPage() {
     >
       <div className="w-full max-w-4xl grid md:grid-cols-2 gap-0 overflow-hidden glass-card shadow-2xl shadow-blue-500/10">
         {/* Left Side: Branding */}
-        <div className="relative p-10 flex flex-col justify-between bg-gradient-to-br from-blue-600 via-blue-500 to-violet-600 overflow-hidden">
+        <div className="relative p-6 md:p-8 flex flex-col justify-between bg-gradient-to-br from-blue-600 via-blue-500 to-violet-600 overflow-hidden">
           <div className="absolute inset-0 bg-mesh opacity-20" />
           
           <motion.div 
@@ -40,7 +40,7 @@ export default function LoginPage() {
             animate={{ opacity: 1, y: 0 }}
             className="relative z-10 flex items-center gap-3"
           >
-            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl shadow-lg">💡</div>
+            <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center text-base shadow-lg">💡</div>
             <span className="font-extrabold text-sm tracking-tighter text-white uppercase italic">AdaptiveEd Pitch</span>
           </motion.div>
 
@@ -79,8 +79,8 @@ export default function LoginPage() {
         </div>
 
         {/* Right Side: Login Form */}
-        <div className="bg-[#030712] p-10 flex flex-col justify-center">
-          <div className="max-w-xs mx-auto w-full text-center">
+        <div className="bg-[#030712] p-8 md:p-10 flex flex-col justify-center items-center">
+          <div className="max-w-xs w-full text-center">
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -94,9 +94,9 @@ export default function LoginPage() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleGoogleSignIn}
-              className="w-full group relative flex items-center justify-center gap-3 py-4 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-white rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all duration-300"
+              className="w-full group relative flex items-center justify-center gap-3 py-3 px-6 text-sm font-black uppercase tracking-[0.1em] text-white rounded-xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all duration-300"
             >
-              <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4" />
+              <img src="https://www.google.com/favicon.ico" alt="Google" className="w-5 h-5" />
               Sign in with Google
             </motion.button>
 

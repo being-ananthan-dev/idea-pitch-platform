@@ -129,9 +129,9 @@ export default function GuidelinesPage() {
           </p>
         </div>
 
-        <div className="glass-card p-10 mb-10 space-y-8">
+        <div className="glass-card p-6 md:p-8 mb-8 space-y-6">
           {RULES.map((rule, idx) => (
-            <div key={idx} className="flex items-start gap-6 pb-8 border-b border-white/5 last:border-0 last:pb-0">
+            <div key={idx} className="flex items-start gap-4 pb-6 border-b border-white/5 last:border-0 last:pb-0">
               <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center shrink-0 border border-white/5 shadow-inner">
                 {rule.icon}
               </div>
@@ -207,7 +207,7 @@ export default function GuidelinesPage() {
           id="start-competition-btn"
           onClick={handleStart}
           disabled={starting || !agreed}
-          className="btn-primary w-full flex items-center justify-center gap-3 py-5 text-sm font-black uppercase tracking-[0.2em] rounded-2xl disabled:opacity-30 disabled:grayscale transition-all"
+          className="btn-primary w-full flex items-center justify-center gap-3 py-4 text-sm font-black uppercase tracking-[0.2em] rounded-xl disabled:opacity-30 disabled:grayscale transition-all"
         >
           {starting ? (
             <><Loader2 className="w-5 h-5 animate-spin" /> Syncing...</>

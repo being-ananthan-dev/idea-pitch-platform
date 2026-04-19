@@ -395,9 +395,9 @@ export default function CompetitionPage() {
                     onChange={handleAnswerChange}
                     disabled={submitting}
                     placeholder="Initialise transcription..."
-                    className="input-field resize-none flex-1 leading-[1.8] text-[0.95rem] bg-[#02040A] hover:bg-[#03060F] transition-all border border-white/10 shadow-2xl p-6 font-inter text-gray-200 placeholder:text-gray-800 focus:border-blue-500/40 rounded-2xl"
+                    className="input-field resize-none flex-1 leading-[1.7] text-[0.95rem] bg-[#02040A] hover:bg-[#03060F] transition-all border border-white/10 shadow-xl p-4 font-inter text-gray-200 placeholder:text-gray-800 focus:border-blue-500/40 rounded-xl"
                   />
-                  <div className="absolute bottom-6 right-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-700 pointer-events-none z-20">
+                  <div className="absolute bottom-4 right-4 text-[9px] font-black uppercase tracking-[0.2em] text-gray-700 pointer-events-none z-20">
                     Terminal Transcription Active // AI Guard v2
                   </div>
                 </div>

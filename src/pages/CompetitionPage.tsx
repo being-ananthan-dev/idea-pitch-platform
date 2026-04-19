@@ -8,7 +8,6 @@ import {
   advanceQuestion,
   submitSubmission,
   updateViolationCount,
-  saveAnswer,
 } from '@/lib/firestore';
 import { Submission, Config } from '@/types';
 import Timer from '@/components/Timer';
@@ -18,6 +17,7 @@ import ViolationBanner from '@/components/ViolationBanner';
 import { useAntiCheat } from '@/hooks/useAntiCheat';
 import { Loader2, Save, ArrowRight, Send } from 'lucide-react';
 import { useModal } from '@/context/ModalContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const DRAFT_KEY = (uid: string, qi: number) => `intellipitch_draft_${uid}_q${qi}`;
 
@@ -39,6 +39,9 @@ export default function CompetitionPage() {
   const configRef = useRef<Config | null>(null);
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const submittingRef = useRef(false);
+
+  // Direction state for framing slide animations (left or right)
+  const [slideDirection, setSlideDirection] = useState(1);
 
   const handleViolation = useCallback(
     async (type: 'tab_switch' | 'fullscreen_exit', _total: number) => {
@@ -146,6 +149,7 @@ export default function CompetitionPage() {
     const totalQ = configRef.current.questions.length;
     if (qi < totalQ - 1) {
       const nextQi = qi + 1;
+      setSlideDirection(1); // Slide right
       await advanceQuestion(user.uid, nextQi, draft, wc);
       localStorage.removeItem(DRAFT_KEY(user.uid, qi));
       const updatedSub = await getSubmission(user.uid);
@@ -169,16 +173,22 @@ export default function CompetitionPage() {
     const wc = countWords(draft);
     const min = config.minWords ?? 30;
     const totalQ = config.questions.length;
+    
     if (wc < min) {
       setMinWordError(`Please write at least ${min} words before proceeding. Current: ${wc} words.`);
       return;
     }
+    
     setSubmitting(true);
     submittingRef.current = true;
+    
     if (qi < totalQ - 1) {
       const nextQi = qi + 1;
+      setSlideDirection(1);
+      
       await advanceQuestion(user.uid, nextQi, draft, wc);
       localStorage.removeItem(DRAFT_KEY(user.uid, qi));
+      
       const updatedSub = await getSubmission(user.uid);
       if (updatedSub) {
         submissionRef.current = updatedSub;
@@ -206,7 +216,7 @@ export default function CompetitionPage() {
 
   if (loading || !submission || !config) {
     return (
-      <div className="min-h-[100dvh] bg-bg grid place-items-center">
+      <div className="min-h-[100dvh] bg-[#030712] grid place-items-center">
         <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
       </div>
     );
@@ -216,14 +226,47 @@ export default function CompetitionPage() {
   const question = config.questions[qi];
   const allowedTime = question?.timer ?? 120;
   const isLastQuestion = qi === config.questions.length - 1;
-  const wc = countWords(answer);
   const integrityScore = Math.max(0, 100 - tabSwitchCount * 10 - fullscreenExitCount * 15);
   const totalViolations = tabSwitchCount + fullscreenExitCount;
 
   if (!question) return null;
 
+  // Slide Animation Variants
+  const variants = {
+    enter: (direction: number) => {
+      return {
+        x: direction > 0 ? 50 : -50,
+        opacity: 0,
+        scale: 0.98
+      };
+    },
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1,
+      scale: 1
+    },
+    exit: (direction: number) => {
+      return {
+        zIndex: 0,
+        x: direction < 0 ? 50 : -50,
+        opacity: 0,
+        scale: 0.98
+      };
+    }
+  };
+
   return (
-    <div className="h-[100dvh] bg-bg flex flex-col overflow-hidden">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      className="h-[100dvh] bg-[#030712] flex flex-col overflow-hidden relative"
+    >
+      {/* Background Mesh */}
+      <div className="absolute inset-0 bg-mesh pointer-events-none opacity-50"></div>
+
       {showBanner && lastViolationType && (
         <ViolationBanner
           count={totalViolations}
@@ -233,11 +276,11 @@ export default function CompetitionPage() {
         />
       )}
 
-      <header className="border-b border-white/5 bg-black/30 backdrop-blur-md px-4 sm:px-8 py-3">
+      <header className="border-b border-white/5 bg-[#080d19]/80 backdrop-blur-xl px-4 sm:px-8 py-4 relative z-20">
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="text-lg">💡</span>
-            <span className="font-bold text-sm gradient-text hidden sm:block">IntelliPitch</span>
+          <div className="flex items-center gap-3 shrink-0">
+            <span className="text-xl shadow-[0_0_10px_rgba(59,130,246,0.3)] bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-md p-1">💡</span>
+            <span className="font-extrabold text-sm tracking-tight text-white hidden sm:block">IntelliPitch</span>
           </div>
           <div className="flex items-center gap-2">
             <Timer
@@ -246,91 +289,124 @@ export default function CompetitionPage() {
               onExpire={handleTimerExpire}
             />
           </div>
-          <div className="flex items-center gap-3 shrink-0 text-xs text-gray-400">
+          <div className="flex items-center gap-4 shrink-0 text-xs font-semibold text-gray-500">
             {autoSaveStatus !== 'idle' && (
-              <span className={`flex items-center gap-1 ${autoSaveStatus === 'saving' ? 'text-gray-500' : 'text-green-400'}`}>
-                <Save className="w-3 h-3" />
-                {autoSaveStatus === 'saving' ? 'Auto-saving...' : 'Saved'}
-              </span>
+              <motion.span 
+                initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                className={`flex items-center gap-1.5 ${autoSaveStatus === 'saving' ? 'text-gray-500' : 'text-green-400'}`}
+              >
+                <Save className="w-3.5 h-3.5" />
+                {autoSaveStatus === 'saving' ? 'Auto-saving' : 'Saved'}
+              </motion.span>
             )}
             <div className={`badge ${integrityScore >= 70 ? 'badge-green' : integrityScore >= 40 ? 'badge-yellow' : 'badge-red'}`}>
               🛡️ {integrityScore}
             </div>
             {totalViolations > 0 && (
-              <div className="badge badge-red">⚠️ {totalViolations}/3</div>
+              <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 0.3 }} className="badge badge-red">⚠️ {totalViolations}/3</motion.div>
             )}
           </div>
         </div>
       </header>
 
-      <main className="flex-1 main-container py-6 md:py-10 flex flex-col gap-6 overflow-hidden">
-        <div className="animate-fade-in">
+      <main className="flex-1 main-container py-8 md:py-12 flex flex-col gap-6 overflow-hidden relative z-10">
+        
+        {/* Progress Bar Container */}
+        <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
           <ProgressBar
             currentQuestion={qi}
             total={config.questions.length}
             labels={config.questions.map(q => q.title)}
           />
-        </div>
+        </motion.div>
 
-        <div className="glass-card p-6 md:p-8 animate-fade-in-up flex-1 flex flex-col gap-5 min-h-0">
-          <div className="shrink-0">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xl">{question.emoji}</span>
-              <span className="badge badge-blue">Question {qi + 1} of {config.questions.length}</span>
-            </div>
-            <h2 className="text-lg font-bold text-white mb-2">{question.title}</h2>
-            <div className="text-gray-300 leading-relaxed text-sm bg-white/5 rounded-xl p-3 border border-white/5 max-h-[100px] overflow-y-auto">
-              {question.prompt}
-            </div>
-          </div>
-
-          <div className="flex flex-col flex-1 min-h-0">
-            <label className="text-xs font-medium text-gray-400 mb-1.5 flex items-center justify-between uppercase tracking-wider px-1">
-              <span>Your Answer</span>
-              <span>Min {config.minWords} · Max {config.maxWords}</span>
-            </label>
-            <textarea
-              id={`answer-q${qi}`}
-              value={answer}
-              onChange={handleAnswerChange}
-              disabled={submitting}
-              placeholder="Start typing your answer here..."
-              className="input-field resize-none flex-1 leading-relaxed text-base"
-              style={{ fontFamily: 'var(--font-inter)' }}
-            />
-            <div className="shrink-0 mt-2">
-              <WordCounter text={answer} min={config.minWords} max={config.maxWords} />
-            </div>
-            {minWordError && (
-              <p className="text-red-400 text-xs mt-2 flex items-center gap-1.5 shrink-0">
-                ⚠️ {minWordError}
-              </p>
-            )}
-          </div>
-
-          <div className="flex justify-end shrink-0">
-            <button
-              id={isLastQuestion ? 'submit-btn' : `next-q${qi}-btn`}
-              onClick={handleNext}
-              disabled={submitting}
-              className="group relative overflow-hidden flex items-center gap-2 px-8 py-3 font-bold text-sm rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-cyan-500 text-white transition-all duration-300 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+        {/* Question Area Container */}
+        <div className="relative flex-1 min-h-0 w-full max-w-4xl mx-auto">
+          <AnimatePresence initial={false} custom={slideDirection} mode="wait">
+            <motion.div
+              key={qi} // Animate on question index change
+              custom={slideDirection}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ x: { type: "spring", stiffness: 300, damping: 30 }, opacity: { duration: 0.2 } }}
+              className="absolute inset-0 w-full h-full glass-card p-6 md:p-8 flex flex-col gap-5 border border-white/5"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-              {submitting ? (
-                <><Loader2 className="w-4 h-4 animate-spin relative z-10" /> <span className="relative z-10">{isLastQuestion ? 'Submitting...' : 'Saving...'}</span></>
-              ) : isLastQuestion ? (
-                <><Send className="w-4 h-4 relative z-10" /> <span className="relative z-10">Submit Answers</span></>
-              ) : (
-                <><span className="relative z-10">Next Question</span> <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" /></>
-              )}
-            </button>
-          </div>
+              <div className="shrink-0">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="text-2xl">{question.emoji}</span>
+                  <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-semibold text-blue-400 tracking-wider uppercase">
+                    Question {qi + 1} of {config.questions.length}
+                  </span>
+                </div>
+                <h2 className="text-2xl font-black text-white mb-3 tracking-tight">{question.title}</h2>
+                <div className="text-gray-300 leading-relaxed text-sm bg-white/5 rounded-xl p-4 border border-white/5 max-h-[140px] overflow-y-auto">
+                  {question.prompt}
+                </div>
+              </div>
+
+              <div className="flex flex-col flex-1 min-h-0 relative">
+                <label className="text-xs font-bold text-gray-500 mb-2 flex items-center justify-between uppercase tracking-widest px-1">
+                  <span>Your Pitch</span>
+                  <span className="opacity-60">Min {config.minWords} · Max {config.maxWords}</span>
+                </label>
+                
+                {/* Textarea gets focus halo */}
+                <div className="relative flex-1 flex min-h-0 group">
+                  <textarea
+                    id={`answer-q${qi}`}
+                    value={answer}
+                    onChange={handleAnswerChange}
+                    disabled={submitting}
+                    placeholder="Formulate your response here... (auto-saves locally)"
+                    className="input-field resize-none flex-1 leading-[1.7] text-[0.95rem] bg-[#0A0F1A] hover:bg-[#0C1220] transition-colors border-white/10 shadow-inner z-10 p-5"
+                  />
+                  <div className="absolute inset-0 -m-0.5 rounded-[14px] bg-gradient-to-r from-blue-500 to-cyan-500 opacity-0 group-focus-within:opacity-20 blur transition-opacity duration-300 pointer-events-none z-0"></div>
+                </div>
+
+                <div className="flex items-end justify-between mt-3 shrink-0 px-1">
+                  <div>
+                    {minWordError && (
+                      <motion.p initial={{ opacity: 0, x: -5 }} animate={{ opacity: 1, x: 0 }} className="text-red-400 text-xs font-medium flex items-center gap-1.5">
+                        ⚠️ {minWordError}
+                      </motion.p>
+                    )}
+                  </div>
+                  <WordCounter text={answer} min={config.minWords} max={config.maxWords} />
+                </div>
+              </div>
+
+              <div className="flex justify-end shrink-0 pt-2 border-t border-white/5 mt-2">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  id={isLastQuestion ? 'submit-btn' : `next-q${qi}-btn`}
+                  onClick={handleNext}
+                  disabled={submitting}
+                  className="btn-primary flex items-center gap-2.5 px-8 py-3.5 text-sm w-full sm:w-auto overflow-hidden group"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover:translate-x-[200%] transition-transform duration-1000" />
+                  {submitting ? (
+                    <><Loader2 className="w-4 h-4 animate-spin text-[#030712]" /> <span>{isLastQuestion ? 'Submitting...' : 'Saving...'}</span></>
+                  ) : isLastQuestion ? (
+                    <><Send className="w-4 h-4 text-[#030712]" /> <span>Submit Pitch</span></>
+                  ) : (
+                    <><span>Lock & Continue</span> <ArrowRight className="w-4 h-4 text-[#030712] group-hover:translate-x-1 transition-transform" /></>
+                  )}
+                </motion.button>
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
 
-        <p className="text-center text-xs text-gray-600 pb-2">
-          ⚠️ Do not switch tabs or exit fullscreen · Timer runs server-side · Answers auto-save
-        </p>
+        <motion.p 
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
+          className="text-center text-[11px] font-medium tracking-widest uppercase text-gray-600 pb-2 mt-4"
+        >
+          ⚠️ Do not switch tabs or exit fullscreen
+        </motion.p>
       </main>
-    </div>
+    </motion.div>
   );
 }

@@ -3,6 +3,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useFlowGuard } from '@/hooks/useFlowGuard';
 import { Loader2 } from 'lucide-react';
 import { useModal } from '@/context/ModalContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function LoginPage() {
   const { signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
@@ -55,27 +56,56 @@ export default function LoginPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[100dvh] bg-bg grid place-items-center">
+      <div className="min-h-[100dvh] bg-[#030712] grid place-items-center">
         <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
       </div>
     );
   }
 
   return (
-    <div className="auth-container">
-      <div className="w-full max-w-[1000px] min-h-[600px] h-auto bg-[#0D1326] border border-white/5 rounded-[20px] shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-[1.2fr_0.8fr] animate-fade-in-up">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="auth-container relative overflow-hidden"
+    >
+      <motion.div 
+        initial={{ y: 40, opacity: 0, scale: 0.95 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+        className="w-full max-w-[1000px] min-h-[600px] h-auto bg-[#0B1121]/90 backdrop-blur-2xl border border-white/5 rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden grid grid-cols-1 md:grid-cols-[1.2fr_0.8fr] relative z-10"
+      >
         
         {/* LEFT COLUMN: Branding */}
-        <div className="hidden md:flex flex-col items-center justify-center p-12 text-center bg-gradient-to-br from-blue-900/40 to-cyan-900/10 relative overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px]"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px]"></div>
+        <div className="hidden md:flex flex-col items-center justify-center p-12 text-center bg-[#070b14] relative overflow-hidden">
+          <motion.div 
+            animate={{ 
+              scale: [1, 1.2, 1] as any,
+              opacity: [0.3, 0.5, 0.3] as any
+            }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500/20 rounded-full blur-[100px]"
+          />
+          <motion.div 
+            animate={{ 
+              scale: [1, 1.3, 1] as any,
+              opacity: [0.2, 0.4, 0.2] as any
+            }}
+            transition={{ duration: 10, delay: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-cyan-500/20 rounded-full blur-[100px]"
+          />
+          
           <div className="z-10 flex flex-col items-center gap-6">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-[24px] bg-gradient-to-br from-blue-500 to-cyan-500 shadow-[0_0_40px_rgba(59,130,246,0.3)]">
-              <span className="text-4xl">💡</span>
-            </div>
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="inline-flex items-center justify-center w-20 h-20 rounded-[24px] bg-gradient-to-br from-blue-500 to-cyan-500 shadow-[0_0_40px_rgba(59,130,246,0.3)]"
+            >
+              <span className="text-4xl text-white">💡</span>
+            </motion.div>
             <div>
               <h1 className="text-4xl font-extrabold tracking-tight text-white mb-2">IntelliPitch</h1>
-              <p className="text-blue-300 font-medium tracking-widest text-sm uppercase">IEEE SB MCET</p>
+              <p className="text-blue-400 font-medium tracking-widest text-sm uppercase">IEEE SB MCET</p>
             </div>
             <p className="text-gray-400 mt-4 leading-relaxed max-w-sm">
               Architect solutions to real-world problems under pressure. Judged blind, timed to the millisecond.
@@ -84,38 +114,55 @@ export default function LoginPage() {
         </div>
 
         {/* RIGHT COLUMN: Form */}
-        <div className="p-8 md:p-10 lg:p-12 flex flex-col justify-center h-full bg-[#0D1326]">
-          <div className="w-full max-w-md mx-auto">
-            <h2 className="text-3xl font-bold text-white mb-2">Welcome!</h2>
-            <p className="text-gray-400 text-sm mb-8">
-              {isSignUp ? 'Create an account to participate' : 'Sign in to your account'}
-            </p>
+        <div className="p-8 md:p-10 lg:p-12 flex flex-col justify-center h-full bg-[#0B1121]">
+          <motion.div layout className="w-full max-w-md mx-auto">
+            <motion.h2 layout="position" className="text-3xl font-bold text-white mb-2">Welcome!</motion.h2>
+            <motion.p layout="position" className="text-gray-400 text-sm mb-8">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={isSignUp ? 'signup' : 'signin'}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {isSignUp ? 'Create a new account to participate' : 'Sign in to access your dashboard'}
+                </motion.span>
+              </AnimatePresence>
+            </motion.p>
 
-            {error && (
-              <div className="mb-6 p-3 rounded-xl bg-red-900/30 border border-red-500/40 text-red-300 text-sm text-center">
-                {error}
-              </div>
-            )}
+            <AnimatePresence mode="popLayout">
+              {error && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                  className="mb-6 p-4 rounded-xl bg-red-950/40 border border-red-500/20 text-red-400 text-sm text-center font-medium backdrop-blur-sm"
+                >
+                  {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-            <form onSubmit={handleEmailSubmit} className="flex flex-col gap-5">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-gray-300 uppercase tracking-wider ml-1">Email</label>
+            <motion.form layout onSubmit={handleEmailSubmit} className="flex flex-col gap-5">
+              <motion.div layout className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider pl-1">Email</label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  className="w-full bg-[#0A0F1E] border border-white/10 rounded-[12px] px-4 py-3.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all shadow-inner"
+                  placeholder="name@example.com"
+                  className="input-field"
                 />
-              </div>
+              </motion.div>
 
-              <div className="flex flex-col gap-1.5">
-                <div className="flex items-center justify-between ml-1">
-                  <label className="text-xs font-semibold text-gray-300 uppercase tracking-wider">Password</label>
+              <motion.div layout className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between pl-1 pr-1">
+                  <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Password</label>
                   {!isSignUp && (
                     <a href="#" className="text-xs font-medium text-blue-400 hover:text-blue-300 transition-colors">
-                      Forgot Password?
+                      Forgot?
                     </a>
                   )}
                 </div>
@@ -124,43 +171,48 @@ export default function LoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  className="w-full bg-[#0A0F1E] border border-white/10 rounded-[12px] px-4 py-3.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all shadow-inner"
+                  placeholder="••••••••"
+                  className="input-field"
                 />
-              </div>
+              </motion.div>
 
-              <div className="flex flex-col gap-3 mt-2">
-                <button
+              <motion.div layout className="flex flex-col gap-3 mt-4">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={submitting || googleSubmitting}
-                  className="btn-primary w-full flex items-center justify-center gap-2 py-3.5 rounded-[12px] font-semibold text-sm disabled:opacity-50"
+                  className="btn-primary w-full flex items-center justify-center gap-2 py-4 rounded-[12px] font-semibold text-sm disabled:opacity-50"
                 >
-                  {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                  {submitting && <Loader2 className="w-4 h-4 animate-spin text-[#030712]" />}
                   {isSignUp ? 'Create Account' : 'Sign In'}
-                </button>
+                </motion.button>
                 
                 <button
                   type="button"
                   onClick={() => { setIsSignUp(!isSignUp); setError(''); }}
-                  className="w-full py-3.5 rounded-[12px] font-semibold text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-all border border-transparent"
+                  className="w-full py-4 rounded-[12px] font-semibold text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all border border-transparent"
                 >
                   {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
                 </button>
-              </div>
-            </form>
+              </motion.div>
+            </motion.form>
 
-            <div className="relative flex items-center justify-center my-8">
-              <div className="absolute w-full border-t border-white/10"></div>
-              <div className="relative bg-[#0D1326] px-4 text-xs font-bold text-gray-500 uppercase tracking-widest">
-                Or Login With
+            <motion.div layout className="relative flex items-center justify-center my-8">
+              <div className="absolute w-full border-t border-white/5"></div>
+              <div className="relative bg-[#0B1121] px-4 text-xs font-bold text-gray-600 uppercase tracking-widest">
+                Or Continue With
               </div>
-            </div>
+            </motion.div>
 
-            <button
+            <motion.button
+              layout
+              whileHover={{ scale: 1.02, backgroundColor: 'rgba(255,255,255,0.08)' }}
+              whileTap={{ scale: 0.98 }}
               type="button"
               onClick={handleGoogleSignIn}
               disabled={submitting || googleSubmitting}
-              className="w-full flex items-center justify-center gap-3 py-3.5 rounded-[12px] font-semibold text-sm bg-white/5 hover:bg-white/10 border border-white/10 transition-all disabled:opacity-50 group"
+              className="w-full flex items-center justify-center gap-3 py-4 rounded-[12px] font-semibold text-sm bg-white/[0.03] border border-white/5 disabled:opacity-50 group"
             >
               {googleSubmitting ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -173,14 +225,14 @@ export default function LoginPage() {
                 </svg>
               )}
               Google
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
       
-      <p className="text-center text-xs text-gray-600 mt-6 md:mt-8 tracking-wide">
-        © 2025 IEEE SB MCET
+      <p className="text-center text-xs text-gray-600 mt-8 tracking-wider absolute bottom-6 w-full pointer-events-none">
+        © 2026 IEEE SB MCET
       </p>
-    </div>
+    </motion.div>
   );
 }

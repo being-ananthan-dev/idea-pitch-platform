@@ -212,7 +212,7 @@ export default function GuidelinesPage() {
           {starting ? (
             <><Loader2 className="w-5 h-5 animate-spin" /> Syncing...</>
           ) : (
-            <>Launch Terminal Protocol <ArrowRight className="w-5 h-5" /></>
+            <>Start Pitching <ArrowRight className="w-5 h-5" /></>
           )}
         </button>
       </div>

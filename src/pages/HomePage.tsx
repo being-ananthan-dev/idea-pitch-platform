@@ -94,7 +94,7 @@ export default function HomePage() {
           )}
           <div className="flex items-center gap-3">
             <button onClick={handleEnterEvent} className="btn-primary flex items-center gap-2 text-[11px] px-5 py-2 uppercase tracking-widest rounded-full">
-              Enter Arena
+              Start Pitching
               <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
             {user && (
@@ -145,7 +145,7 @@ export default function HomePage() {
                 className="btn-primary group flex items-center gap-3 text-sm font-black uppercase tracking-widest px-10 py-5 rounded-2xl"
               >
                 <Zap className="w-5 h-5 fill-white" />
-                Launch Terminal
+                Start Pitching
                 <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </motion.button>
             </motion.div>

@@ -129,15 +129,15 @@ export default function GuidelinesPage() {
           </p>
         </div>
 
-        <div className="glass-card p-8 mb-8 space-y-6">
+        <div className="glass-card p-10 mb-10 space-y-8">
           {RULES.map((rule, idx) => (
-            <div key={idx} className="flex items-start gap-5 pb-6 border-b border-white/5 last:border-0 last:pb-0">
-              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/5">
+            <div key={idx} className="flex items-start gap-6 pb-8 border-b border-white/5 last:border-0 last:pb-0">
+              <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center shrink-0 border border-white/5 shadow-inner">
                 {rule.icon}
               </div>
-              <div>
-                <h3 className="font-black text-white text-sm uppercase tracking-tight">{rule.title}</h3>
-                <p className="text-gray-500 text-sm mt-1 leading-relaxed font-medium">{rule.desc}</p>
+              <div className="pt-1">
+                <h3 className="font-black text-white text-base uppercase tracking-tight mb-2">{rule.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed font-medium">{rule.desc}</p>
               </div>
             </div>
           ))}

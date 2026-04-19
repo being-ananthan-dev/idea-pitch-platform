@@ -137,12 +137,12 @@ export default function HomePage() {
               Reengineering education for an uncertain future. Join the elite sprint to architect the next-gen learning paradigm.
             </motion.p>
 
-            <motion.div variants={FADE_UP} className="flex flex-col sm:flex-row items-center justify-center gap-5 pt-4">
+            <motion.div variants={FADE_UP} className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6">
               <motion.button
                 whileHover={{ scale: 1.05, filter: "brightness(1.2)" }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleEnterEvent}
-                className="btn-primary group flex items-center gap-3 text-sm font-black uppercase tracking-widest px-10 py-5 rounded-2xl"
+                className="btn-primary group flex items-center gap-3 text-base font-black uppercase tracking-widest px-12 py-6 rounded-2xl"
               >
                 <Zap className="w-5 h-5 fill-white" />
                 {(submissionStatus === 'submitted' || submissionStatus === 'locked') ? 'View Submission' : 'Start Pitching'}
@@ -226,14 +226,13 @@ export default function HomePage() {
              <div className="font-black text-white text-lg tracking-tighter uppercase mb-2">AdaptiveEd Pitch</div>
              <p className="text-gray-500 text-xs mb-8">© 2026 IEEE SB MCET — REENGINEERING EDUCATION FOR AN UNCERTAIN FUTURE</p>
            </div>
-           <div className="flex items-center gap-6 text-[10px] font-bold text-gray-600 uppercase tracking-widest">
-             <span className="hover:text-white cursor-pointer transition-colors">Privacy</span>
-             <span className="hover:text-white cursor-pointer transition-colors">Guidelines</span>
-             <span className="hover:text-white cursor-pointer transition-colors">Contact</span>
-           </div>
+            <div className="flex items-center gap-8 text-xs font-bold text-gray-500 uppercase tracking-widest">
+              <span className="hover:text-white cursor-pointer transition-colors">Privacy</span>
+              <span className="hover:text-white cursor-pointer transition-colors">Guidelines</span>
+              <span className="hover:text-white cursor-pointer transition-colors">Contact</span>
+            </div>
         </div>
       </footer>
     </motion.div>
   );
 }
-

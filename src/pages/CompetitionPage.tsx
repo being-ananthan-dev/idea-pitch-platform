@@ -330,7 +330,7 @@ export default function CompetitionPage() {
               {integrityScore}%
             </div>
             {totalViolations > 0 && (
-              <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 0.3 }} className="badge badge-red scale-90 sm:scale-100 font-mono text-[10px]">ERR: {totalViolations}/3</motion.div>
+              <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 0.3 }} className="badge badge-red scale-100 sm:scale-110 font-mono text-[11px]">ERR: {totalViolations}/3</motion.div>
             )}
             <button 
               onClick={signOut}
@@ -375,8 +375,8 @@ export default function CompetitionPage() {
                   </div>
                   <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest opacity-40">System ready // Waiting for input</span>
                 </div>
-                <h2 className="text-3xl font-black text-white mb-4 tracking-tighter leading-none">{question.title}</h2>
-                <div className="text-gray-400 leading-relaxed text-sm bg-[#050810] rounded-xl p-5 border border-white/5 max-h-[140px] overflow-y-auto font-medium">
+                <h2 className="text-4xl font-black text-white mb-4 tracking-tighter leading-none">{question.title}</h2>
+                <div className="text-gray-300 leading-relaxed text-lg font-medium bg-[#050810] rounded-xl p-6 border border-white/5 max-h-[160px] overflow-y-auto">
                   {question.prompt}
                 </div>
               </div>

@@ -18,12 +18,14 @@ import { useAntiCheat } from '@/hooks/useAntiCheat';
 import { Loader2, Save, ArrowRight, Send } from 'lucide-react';
 import { useModal } from '@/context/ModalContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useConfig } from '@/context/ConfigContext';
 
 const DRAFT_KEY = (uid: string, qi: number) => `intellipitch_draft_${uid}_q${qi}`;
 
 export default function CompetitionPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { config: globalConfig } = useConfig();
 
   const [submission, setSubmission] = useState<Submission | null>(null);
   const [config, setConfig] = useState<Config | null>(null);
@@ -95,15 +97,18 @@ export default function CompetitionPage() {
     if (!user) return;
     const load = async () => {
       try {
-        const [sub, cfg] = await Promise.all([getSubmission(user.uid), getConfig()]);
+        const [sub, cfg] = await Promise.all([
+          getSubmission(user.uid),
+          globalConfig ? Promise.resolve(globalConfig) : getConfig()
+        ]);
         if (!sub) { navigate('/guidelines', { replace: true }); return; }
         if (sub.status === 'submitted' || sub.status === 'locked') {
           navigate('/thankyou', { replace: true }); return;
         }
         submissionRef.current = sub;
-        configRef.current = cfg;
+        configRef.current = cfg as Config;
         setSubmission(sub);
-        setConfig(cfg);
+        setConfig(cfg as Config);
         const draftKey = DRAFT_KEY(user.uid, sub.questionIndex);
         const savedDraft = typeof window !== 'undefined' ? localStorage.getItem(draftKey) : null;
         const storedAnswer = sub.answers?.find((a) => a.questionIndex === sub.questionIndex);
@@ -118,7 +123,7 @@ export default function CompetitionPage() {
       }
     };
     load();
-  }, [user, navigate, initCounts]);
+  }, [user, navigate, initCounts, globalConfig]);
 
   const handleAnswerChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const text = e.target.value;
@@ -276,11 +281,11 @@ export default function CompetitionPage() {
         />
       )}
 
-      <header className="border-b border-white/5 bg-[#080d19]/80 backdrop-blur-xl px-4 sm:px-8 py-4 relative z-20">
+      <header className="border-b border-white/5 bg-[#080d19]/80 backdrop-blur-xl px-4 sm:px-8 py-3.5 relative z-20">
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 shrink-0">
             <span className="text-xl shadow-[0_0_10px_rgba(59,130,246,0.3)] bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-md p-1">💡</span>
-            <span className="font-extrabold text-sm tracking-tight text-white hidden sm:block">IntelliPitch</span>
+            <span className="font-extrabold text-sm tracking-tight text-white hidden md:block">IntelliPitch</span>
           </div>
           <div className="flex items-center gap-2">
             <Timer
@@ -289,21 +294,21 @@ export default function CompetitionPage() {
               onExpire={handleTimerExpire}
             />
           </div>
-          <div className="flex items-center gap-4 shrink-0 text-xs font-semibold text-gray-500">
+          <div className="flex items-center gap-3 sm:gap-4 shrink-0 text-xs font-semibold text-gray-500">
             {autoSaveStatus !== 'idle' && (
               <motion.span 
                 initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                className={`flex items-center gap-1.5 ${autoSaveStatus === 'saving' ? 'text-gray-500' : 'text-green-400'}`}
+                className={`hidden sm:flex items-center gap-1.5 ${autoSaveStatus === 'saving' ? 'text-gray-500' : 'text-green-400'}`}
               >
                 <Save className="w-3.5 h-3.5" />
-                {autoSaveStatus === 'saving' ? 'Auto-saving' : 'Saved'}
+                {autoSaveStatus === 'saving' ? 'Saving' : 'Saved'}
               </motion.span>
             )}
-            <div className={`badge ${integrityScore >= 70 ? 'badge-green' : integrityScore >= 40 ? 'badge-yellow' : 'badge-red'}`}>
+            <div className={`badge ${integrityScore >= 70 ? 'badge-green' : integrityScore >= 40 ? 'badge-yellow' : 'badge-red'} scale-90 sm:scale-100`}>
               🛡️ {integrityScore}
             </div>
             {totalViolations > 0 && (
-              <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 0.3 }} className="badge badge-red">⚠️ {totalViolations}/3</motion.div>
+              <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 0.3 }} className="badge badge-red scale-90 sm:scale-100">⚠️ {totalViolations}/3</motion.div>
             )}
           </div>
         </div>

@@ -42,8 +42,11 @@ const RULES = [
   },
 ];
 
+import { useConfig } from '@/context/ConfigContext';
+
 export default function GuidelinesPage() {
   const { user } = useAuth();
+  const { config: globalConfig } = useConfig();
   const { loading } = useFlowGuard({ requiredStep: 'guidelines' });
   const { showModal } = useModal();
   const navigate = useNavigate();
@@ -57,7 +60,7 @@ export default function GuidelinesPage() {
     setStarting(true);
 
     try {
-      const config = await getConfig();
+      const config = globalConfig || await getConfig();
 
       if (!config.eventLive) {
         setError('The event is not live yet. Please wait for the organizers to start it.');

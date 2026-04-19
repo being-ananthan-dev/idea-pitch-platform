@@ -61,7 +61,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.05); /* crisp hair border */
   border-top-color: rgba(255, 255, 255, 0.1);
   border-left-color: rgba(255, 255, 255, 0.08); /* directional light emulation */
-  border-radius: 16px; /* rounded-2xl */
+  border-radius: 20px; /* slightly more rounded for mobile */
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255,255,255,0.02);
   transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
 }
@@ -107,8 +107,10 @@ body {
   background: linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 100%); /* Premium Apple-like Silver */
   color: #030712; 
   border: none;
-  border-radius: 12px; 
-  padding: 12px 28px;
+  border-radius: 14px; 
+  padding: 14px 28px;
+  min-height: 48px; /* Safe touch target */
+  min-width: 44px;
   font-size: 0.95rem; 
   font-weight: 700;
   cursor: pointer;
@@ -344,6 +346,8 @@ body {
   display: grid;
   place-items: center;
   padding: 1rem;
+  padding-top: calc(1rem + env(safe-area-inset-top));
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom));
   background-color: var(--color-bg);
   background-image: 
     radial-gradient(circle at 15% 50%, rgba(59,130,246,0.05), transparent 25%),

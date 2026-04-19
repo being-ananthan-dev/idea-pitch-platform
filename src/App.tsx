@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from '@/context/AuthContext';
 import { ModalProvider } from '@/context/ModalContext';
+import { ConfigProvider } from '@/context/ConfigContext';
 
 import LoadingPage from '@/pages/LoadingPage';
 import HomePage from '@/pages/HomePage';
@@ -22,20 +23,22 @@ export default function App() {
       <div className="fixed bottom-[10%] left-[-5%] w-[350px] h-[350px] bg-cyan-700/10 blur-[70px] rounded-full pointer-events-none -z-10" style={{ willChange: 'transform', transform: 'translateZ(0)' }} />
 
       <AuthProvider>
-        <ModalProvider>
-          <Routes>
-            <Route path="/" element={<LoadingPage />} />
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/admin" element={<AdminPage />} />
-            <Route path="/competition" element={<CompetitionPage />} />
-            <Route path="/details" element={<DetailsPage />} />
-            <Route path="/guidelines" element={<GuidelinesPage />} />
-            <Route path="/judge" element={<JudgePage />} />
-            <Route path="/thankyou" element={<ThankyouPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </ModalProvider>
+        <ConfigProvider>
+          <ModalProvider>
+            <Routes>
+              <Route path="/" element={<LoadingPage />} />
+              <Route path="/home" element={<HomePage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/admin" element={<AdminPage />} />
+              <Route path="/competition" element={<CompetitionPage />} />
+              <Route path="/details" element={<DetailsPage />} />
+              <Route path="/guidelines" element={<GuidelinesPage />} />
+              <Route path="/judge" element={<JudgePage />} />
+              <Route path="/thankyou" element={<ThankyouPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </ModalProvider>
+        </ConfigProvider>
       </AuthProvider>
     </BrowserRouter>
   );

@@ -73,7 +73,7 @@ export default function LoginPage() {
         initial={{ y: 40, opacity: 0, scale: 0.95 }}
         animate={{ y: 0, opacity: 1, scale: 1 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-        className="w-full max-w-[1000px] min-h-[600px] h-auto bg-[#0B1121]/90 backdrop-blur-2xl border border-white/5 rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden grid grid-cols-1 md:grid-cols-[1.2fr_0.8fr] relative z-10"
+        className="w-full max-w-[1000px] min-h-[500px] md:min-h-[600px] h-auto bg-[#0B1121]/90 backdrop-blur-2xl border border-white/5 rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden grid grid-cols-1 md:grid-cols-[1.1fr_0.9fr] relative z-10"
       >
         
         {/* LEFT COLUMN: Branding */}
@@ -114,10 +114,19 @@ export default function LoginPage() {
         </div>
 
         {/* RIGHT COLUMN: Form */}
-        <div className="p-8 md:p-10 lg:p-12 flex flex-col justify-center h-full bg-[#0B1121]">
+        <div className="p-7 sm:p-10 lg:p-12 flex flex-col justify-center h-full bg-[#0B1121]">
+          {/* Mobile Header (Visible only on small screens) */}
+          <div className="md:hidden flex flex-col items-center mb-8 gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-2xl shadow-lg">💡</div>
+            <div className="text-center">
+              <h1 className="text-2xl font-black text-white">IntelliPitch</h1>
+              <p className="text-blue-400 font-bold text-[10px] tracking-widest uppercase">IEEE SB MCET</p>
+            </div>
+          </div>
+
           <motion.div layout className="w-full max-w-md mx-auto">
-            <motion.h2 layout="position" className="text-3xl font-bold text-white mb-2">Welcome!</motion.h2>
-            <motion.p layout="position" className="text-gray-400 text-sm mb-8">
+            <motion.h2 layout="position" className="text-2xl sm:text-3xl font-bold text-white mb-2">Welcome!</motion.h2>
+            <motion.p layout="position" className="text-gray-400 text-sm mb-6 sm:mb-8">
               <AnimatePresence mode="wait">
                 <motion.span
                   key={isSignUp ? 'signup' : 'signin'}
@@ -144,7 +153,7 @@ export default function LoginPage() {
               )}
             </AnimatePresence>
 
-            <motion.form layout onSubmit={handleEmailSubmit} className="flex flex-col gap-5">
+            <motion.form layout onSubmit={handleEmailSubmit} className="flex flex-col gap-4 sm:gap-5">
               <motion.div layout className="flex flex-col gap-1.5">
                 <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider pl-1">Email</label>
                 <input
@@ -191,14 +200,14 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => { setIsSignUp(!isSignUp); setError(''); }}
-                  className="w-full py-4 rounded-[12px] font-semibold text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all border border-transparent"
+                  className="w-full py-4 rounded-[14px] font-semibold text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all border border-transparent"
                 >
                   {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
                 </button>
               </motion.div>
             </motion.form>
 
-            <motion.div layout className="relative flex items-center justify-center my-8">
+            <motion.div layout className="relative flex items-center justify-center my-6 sm:my-8">
               <div className="absolute w-full border-t border-white/5"></div>
               <div className="relative bg-[#0B1121] px-4 text-xs font-bold text-gray-600 uppercase tracking-widest">
                 Or Continue With
@@ -212,7 +221,7 @@ export default function LoginPage() {
               type="button"
               onClick={handleGoogleSignIn}
               disabled={submitting || googleSubmitting}
-              className="w-full flex items-center justify-center gap-3 py-4 rounded-[12px] font-semibold text-sm bg-white/[0.03] border border-white/5 disabled:opacity-50 group"
+              className="w-full flex items-center justify-center gap-3 py-4 rounded-[14px] font-semibold text-sm bg-white/[0.03] border border-white/5 disabled:opacity-50 group"
             >
               {googleSubmitting ? (
                 <Loader2 className="w-5 h-5 animate-spin" />

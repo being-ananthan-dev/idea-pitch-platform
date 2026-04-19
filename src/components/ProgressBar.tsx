@@ -43,13 +43,13 @@ export default function ProgressBar({ currentQuestion, total, labels }: Progress
 
               {/* Label */}
               <span
-                className={`mt-2 text-center text-xs px-1 leading-tight transition-colors duration-300 ${
+                className={`mt-2 text-center text-[10px] sm:text-xs px-1 leading-tight transition-colors duration-300 ${
                   isActive
-                    ? 'text-blue-400 font-semibold'
+                    ? 'text-blue-400 font-bold sm:font-semibold'
                     : isDone
                     ? 'text-blue-300'
                     : 'text-gray-600'
-                }`}
+                } ${isActive ? 'block' : 'hidden sm:block'}`}
               >
                 {label}
               </span>

@@ -55,7 +55,7 @@ export default function DetailsPage() {
 
   if (loading || !fetched) {
     return (
-      <div className="min-h-[100dvh] bg-bg grid place-items-center">
+      <div className="min-h-[100dvh] bg-[#030712] grid place-items-center">
         <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
       </div>
     );

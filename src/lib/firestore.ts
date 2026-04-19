@@ -11,6 +11,9 @@ import {
   serverTimestamp,
   Timestamp,
   where,
+  increment,
+  deleteDoc,
+  writeBatch,
 } from 'firebase/firestore';
 import { getFirebaseDb } from './firebase';
 import {
@@ -160,8 +163,6 @@ export async function submitSubmission(
   uid: string,
   finalAnswer: string,
   wordCount: number,
-  tabSwitchCount: number,
-  fullscreenExitCount: number,
   autoSubmitReason?: string
 ): Promise<void> {
   const ref = doc(db(), 'submissions', uid);
@@ -176,27 +177,26 @@ export async function submitSubmission(
   if (existingIdx >= 0) answers[existingIdx] = finalAns;
   else answers.push(finalAns);
 
-  const integrityScore = Math.max(0, 100 - tabSwitchCount * 10 - fullscreenExitCount * 15);
-
   await updateDoc(ref, {
     answers,
     status: 'submitted',
     submittedAt: serverTimestamp(),
-    tabSwitchCount,
-    fullscreenExitCount,
-    integrityScore,
     autoSubmitReason: autoSubmitReason || null,
   });
 }
 
 export async function updateViolationCount(
   uid: string,
-  tabSwitchCount: number,
-  fullscreenExitCount: number
+  type: 'tab_switch' | 'fullscreen_exit'
 ): Promise<void> {
   const ref = doc(db(), 'submissions', uid);
-  const integrityScore = Math.max(0, 100 - tabSwitchCount * 10 - fullscreenExitCount * 15);
-  await updateDoc(ref, { tabSwitchCount, fullscreenExitCount, integrityScore });
+  const penalty = type === 'tab_switch' ? 10 : 15;
+  
+  await updateDoc(ref, {
+    tabSwitchCount: increment(type === 'tab_switch' ? 1 : 0),
+    fullscreenExitCount: increment(type === 'fullscreen_exit' ? 1 : 0),
+    integrityScore: increment(-penalty),
+  });
 }
 
 export async function getAllSubmissions(): Promise<(Submission & { id: string })[]> {
@@ -346,4 +346,48 @@ export async function isJudge(email: string): Promise<boolean> {
   const ref = doc(db(), 'judges', email);
   const snap = await getDoc(ref);
   return snap.exists();
+}
+
+// ─── Developer Tools ─────────────────────────────────────────────────────────
+
+export async function deleteSubmission(uid: string): Promise<void> {
+  const ref = doc(db(), 'submissions', uid);
+  await deleteDoc(ref);
+}
+
+export async function seedFreshUsers(): Promise<void> {
+  const batch = writeBatch(db());
+  const users = [
+    { uid: 'fresh-001', name: 'Aarav Kumar', email: 'aarav@test.com', phone: '9876543210' },
+    { uid: 'fresh-002', name: 'Riya Sharma', email: 'riya@test.com', phone: '9988776655' },
+    { uid: 'fresh-003', name: 'Kaleb J.', email: 'kaleb@test.com', phone: '9123456789' },
+  ];
+
+  for (const u of users) {
+    const pRef = doc(db(), 'participants', u.uid);
+    batch.set(pRef, {
+      ...u,
+      createdAt: serverTimestamp(),
+    });
+  }
+
+  await batch.commit();
+}
+
+export async function deleteAllTestData(): Promise<void> {
+  const batch = writeBatch(db());
+  
+  // Clean logs
+  const logs = await getDocs(collection(db(), 'logs'));
+  logs.forEach(d => { if (d.id.startsWith('seed-') || d.data().uid?.startsWith('fresh-')) batch.delete(d.ref); });
+
+  // Clean participants
+  const parts = await getDocs(collection(db(), 'participants'));
+  parts.forEach(d => { if (d.id.startsWith('fresh-')) batch.delete(d.ref); });
+
+  // Clean submissions
+  const subs = await getDocs(collection(db(), 'submissions'));
+  subs.forEach(d => { if (d.id.startsWith('fresh-')) batch.delete(d.ref); });
+
+  await batch.commit();
 }

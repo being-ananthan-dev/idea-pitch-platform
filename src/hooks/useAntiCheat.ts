@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { logViolation } from '@/lib/firestore';
+import { logViolation, updateViolationCount } from '@/lib/firestore';
 
 interface UseAntiCheatOptions {
   uid: string;
@@ -51,9 +51,10 @@ export function useAntiCheat({
 
       const total = getTotalViolations();
 
-      // Log to Firestore
+      // Log to Firestore (Atomic)
       try {
         await logViolation(uid, name, type);
+        await updateViolationCount(uid, type); // This handles atomic increment and penalty
       } catch (e) {
         console.error('Failed to log violation', e);
       }
@@ -104,18 +105,17 @@ export function useAntiCheat({
   useEffect(() => {
     if (!enabled) return;
 
+    let hasBeenFullscreen = !!document.fullscreenElement;
+
     const handleFullscreenChange = () => {
-      if (
-        !document.fullscreenElement &&
-        (tabSwitchRef.current > 0 || fullscreenExitRef.current > 0 ||
-          document.fullscreenElement === null)
-      ) {
-        // Only trigger after initial fullscreen was entered
-        if (fullscreenExitRef.current > 0 || tabSwitchRef.current > 0) {
-          handleViolation('fullscreen_exit');
-        } else {
-          // First time: track that we were in fullscreen, any subsequent exit is a violation
-        }
+      const isCurrentlyFullscreen = !!document.fullscreenElement;
+      
+      if (hasBeenFullscreen && !isCurrentlyFullscreen) {
+        handleViolation('fullscreen_exit');
+      }
+      
+      if (isCurrentlyFullscreen) {
+        hasBeenFullscreen = true;
       }
     };
 

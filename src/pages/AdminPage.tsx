@@ -8,6 +8,9 @@ import {
   getConfig,
   updateConfig,
   isAdmin,
+  deleteSubmission,
+  seedFreshUsers,
+  deleteAllTestData,
 } from '@/lib/firestore';
 import { Submission, Participant, ViolationLog, Config } from '@/types';
 import {
@@ -134,6 +137,30 @@ export default function AdminPage() {
     alert('Configuration saved successfully!');
   };
 
+  const handleResetMyProgress = async () => {
+    if (!user || !confirm('DANGEROUS: This will wipe your competition progress so you can test as a "fresh" user. Proceed?')) return;
+    setRefreshing(true);
+    await deleteSubmission(user.uid);
+    alert('Progress reset! Redirecting to start...');
+    navigate('/', { replace: true });
+  };
+
+  const handleSeedFreshUsers = async () => {
+    setRefreshing(true);
+    await seedFreshUsers();
+    await loadData();
+    setRefreshing(false);
+    alert('3 Fresh test users added!');
+  };
+
+  const handleCleanTestData = async () => {
+    if (!confirm('Delete all "fresh-" test data?')) return;
+    setRefreshing(true);
+    await deleteAllTestData();
+    await loadData();
+    setRefreshing(false);
+  };
+
   const formatTs = (ts: any) => {
     if (!ts) return 'N/A';
     try { return new Date(ts.toMillis()).toLocaleString('en-IN'); } catch { return 'N/A'; }
@@ -228,6 +255,36 @@ export default function AdminPage() {
                   <p className="text-gray-500 text-xs mt-1">{stat.label}</p>
                 </div>
               ))}
+            </div>
+
+            <div className="glass-card p-6 border-blue-500/20 bg-blue-500/5">
+              <h2 className="font-bold text-white mb-5 flex items-center gap-2"><Settings className="w-4 h-4 text-blue-400" /> Developer Toolbox</h2>
+              <div className="grid sm:grid-cols-3 gap-4">
+                <button 
+                  onClick={handleResetMyProgress} 
+                  disabled={refreshing}
+                  className="btn-secondary py-3 px-4 text-xs font-black uppercase tracking-widest border-red-500/20 hover:bg-red-500/10 hover:text-red-400"
+                >
+                  Reset My Progress
+                </button>
+                <button 
+                  onClick={handleSeedFreshUsers} 
+                  disabled={refreshing}
+                  className="btn-secondary py-3 px-4 text-xs font-black uppercase tracking-widest border-blue-500/20"
+                >
+                  Seed 3 Fresh Users
+                </button>
+                <button 
+                  onClick={handleCleanTestData} 
+                  disabled={refreshing}
+                  className="btn-secondary py-3 px-4 text-xs font-black uppercase tracking-widest border-gray-500/20"
+                >
+                  Clean Test Data
+                </button>
+              </div>
+              <p className="text-[10px] text-gray-500 mt-4 uppercase tracking-tighter">
+                Note: "Reset My Progress" allows you to re-test the onboarding flow with your current admin account.
+              </p>
             </div>
 
             {config && (

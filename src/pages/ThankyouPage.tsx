@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { getSubmission, getConfig } from '@/lib/firestore';
 import { Submission, Config } from '@/types';
 import { Loader2, CheckCircle, Home, Shield, Clock } from 'lucide-react';
+import Header from '@/components/Header';
 import { useModal } from '@/context/ModalContext';
 
 export default function ThankyouPage() {
@@ -69,7 +70,8 @@ export default function ThankyouPage() {
   const answeredCount = submission?.answers?.length ?? 0;
 
   return (
-    <div className="auth-container">
+    <div className="auth-container py-12 font-inter">
+      <Header />
       <div className="w-full max-w-lg animate-fade-in-up">
         <div className="text-center mb-8">
           <div className="relative inline-block">

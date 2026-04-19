@@ -4,9 +4,10 @@ import { useAuth } from '@/context/AuthContext';
 import { useFlowGuard } from '@/hooks/useFlowGuard';
 import { createSubmission, getConfig } from '@/lib/firestore';
 import {
-  Loader2, Clock, Shield, AlertTriangle, ChevronRight,
+  Loader2, Clock, Shield, AlertTriangle, ChevronRight, ArrowRight,
   Timer, Maximize, Eye, RotateCcw
 } from 'lucide-react';
+import Header from '@/components/Header';
 import { useModal } from '@/context/ModalContext';
 
 const RULES = [
@@ -109,86 +110,96 @@ export default function GuidelinesPage() {
   }
 
   return (
-    <div className="auth-container py-12">
+    <div className="auth-container py-12 font-inter">
+      <Header />
       <div className="w-full max-w-2xl animate-fade-in-up">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[11px] font-bold text-blue-400 uppercase tracking-widest mb-4">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-            Step 2 of 3
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-[10px] font-black text-violet-400 uppercase tracking-[0.2em] mb-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
+            Initialisation Step 02
           </div>
-          <h1 className="text-3xl font-black text-white mb-2 tracking-tight">Competition Guidelines</h1>
-          <p className="text-gray-400 text-sm">Read carefully before starting. These rules are strictly enforced.</p>
+          <h1 className="text-4xl font-black text-white mb-2 tracking-tighter">Competition Protocol</h1>
+          <p className="text-gray-500 text-sm font-medium">Read carefully. These rules are enforced by the AI Guard engine.</p>
         </div>
 
-        <div className="rounded-xl border border-amber-500/30 bg-amber-950/20 p-4 mb-6 flex items-center gap-3">
-          <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />
-          <p className="text-amber-300 text-sm font-medium">
-            This is a proctored competition. All actions are monitored. Violations are logged and may affect your score.
+        <div className="rounded-2xl border border-amber-500/20 bg-amber-950/10 p-5 mb-8 flex items-center gap-4 backdrop-blur-sm">
+          <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />
+          <p className="text-amber-200/80 text-xs font-semibold leading-relaxed">
+            This is a proctored session. All digital footprints (tab switches, exits) are monitored. 3 Violations trigger an immediate terminal lock.
           </p>
         </div>
 
-        <div className="glass-card p-6 mb-6 space-y-5">
+        <div className="glass-card p-8 mb-8 space-y-6">
           {RULES.map((rule, idx) => (
-            <div key={idx} className="flex items-start gap-4 pb-5 border-b border-white/5 last:border-0 last:pb-0">
-              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0">
+            <div key={idx} className="flex items-start gap-5 pb-6 border-b border-white/5 last:border-0 last:pb-0">
+              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/5">
                 {rule.icon}
               </div>
               <div>
-                <h3 className="font-semibold text-white text-sm">{rule.title}</h3>
-                <p className="text-gray-400 text-sm mt-1 leading-relaxed">{rule.desc}</p>
+                <h3 className="font-black text-white text-sm uppercase tracking-tight">{rule.title}</h3>
+                <p className="text-gray-500 text-sm mt-1 leading-relaxed font-medium">{rule.desc}</p>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="glass-card p-6 mb-6">
-          <h2 className="font-bold text-white mb-4 flex items-center gap-2">
-            <Timer className="w-4 h-4 text-blue-400" /> Answer Requirements
-          </h2>
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            {[
-              { label: 'Minimum words', value: '30 words', color: 'text-green-400' },
-              { label: 'Maximum words', value: '350 words', color: 'text-red-400' },
-              { label: 'Auto-save', value: 'Every question change', color: 'text-blue-400' },
-              { label: 'Violations to submit', value: '3', color: 'text-amber-400' },
-            ].map((item) => (
-              <div key={item.label} className="p-3 rounded-lg bg-white/5">
-                <p className="text-gray-500 text-xs">{item.label}</p>
-                <p className={`font-bold mt-0.5 ${item.color}`}>{item.value}</p>
-              </div>
-            ))}
+        <div className="grid sm:grid-cols-2 gap-4 mb-8">
+          <div className="glass-card p-6">
+            <h2 className="font-black text-white text-[11px] mb-4 flex items-center gap-2 uppercase tracking-widest opacity-60">
+              <Timer className="w-3.5 h-3.5 text-blue-400" /> Transcription Specs
+            </h2>
+            <div className="space-y-3">
+              {[
+                { label: 'Minimum Words', value: '30 per phase' },
+                { label: 'Maximum Words', value: '350 per phase' },
+              ].map((item) => (
+                <div key={item.label} className="flex justify-between items-center bg-white/5 p-3 rounded-lg border border-white/5">
+                  <span className="text-[10px] uppercase font-bold text-gray-700 tracking-widest">{item.label}</span>
+                  <span className="text-xs font-black text-white">{item.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="glass-card p-6">
+            <h2 className="font-black text-white text-[11px] mb-4 flex items-center gap-2 uppercase tracking-widest opacity-60">
+              <Shield className="w-3.5 h-3.5 text-violet-400" /> Integrity Metrics
+            </h2>
+            <div className="space-y-3">
+              {[
+                { label: 'Tab Latency', value: '-10% per s' },
+                { label: 'Max ERR', value: '3/3' },
+              ].map((item) => (
+                <div key={item.label} className="flex justify-between items-center bg-white/5 p-3 rounded-lg border border-white/5">
+                  <span className="text-[10px] uppercase font-bold text-gray-700 tracking-widest">{item.label}</span>
+                  <span className="text-xs font-black text-white">{item.value}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="glass-card p-6 mb-6">
-          <h2 className="font-bold text-white mb-3 flex items-center gap-2">
-            <Shield className="w-4 h-4 text-cyan-400" /> Integrity Score
-          </h2>
-          <p className="text-gray-400 text-sm leading-relaxed">
-            Your submission will include an{' '}
-            <span className="text-cyan-300 font-semibold">Integrity Score</span> calculated as:
-          </p>
-          <div className="mt-3 p-3 rounded-lg bg-cyan-950/30 border border-cyan-500/20 font-mono text-cyan-300 text-sm text-center">
-            Score = 100 − (Tab Switches × 10) − (Fullscreen Exits × 15)
+        <label className="flex items-start gap-4 cursor-pointer mb-8 select-none group">
+          <div className="relative flex items-center">
+            <input
+              id="agree-checkbox"
+              type="checkbox"
+              checked={agreed}
+              onChange={(e) => setAgreed(e.target.checked)}
+              className="peer h-5 w-5 opacity-0 absolute"
+            />
+            <div className="h-5 w-5 border-2 border-white/10 rounded-md bg-white/5 peer-checked:bg-blue-500 peer-checked:border-blue-500 transition-all flex items-center justify-center">
+              {agreed && <ChevronRight className="w-3 h-3 text-white" />}
+            </div>
           </div>
-        </div>
-
-        <label className="flex items-start gap-3 cursor-pointer mb-6 select-none">
-          <input
-            id="agree-checkbox"
-            type="checkbox"
-            checked={agreed}
-            onChange={(e) => setAgreed(e.target.checked)}
-            className="mt-1 w-4 h-4 accent-blue-500"
-          />
-          <span className="text-gray-300 text-sm leading-relaxed">
-            I have read and understood all the guidelines. I agree to abide by the competition rules and acknowledge that violations may lead to disqualification.
+          <span className="text-gray-400 text-xs leading-relaxed font-medium group-hover:text-gray-300 transition-colors">
+            By enabling this toggle, I confirm my cognitive sync with the protocol. I acknowledge that the AI Guard engine's decisions are final.
           </span>
         </label>
 
         {error && (
-          <div className="mb-4 p-3 rounded-lg bg-red-900/30 border border-red-500/40 text-red-300 text-sm">
-            ⚠️ {error}
+          <div className="mb-6 p-4 rounded-xl bg-red-950/20 border border-red-500/20 text-red-400 text-xs font-bold uppercase tracking-widest text-center">
+            ⚠️ ERR: {error}
           </div>
         )}
 
@@ -196,13 +207,12 @@ export default function GuidelinesPage() {
           id="start-competition-btn"
           onClick={handleStart}
           disabled={starting || !agreed}
-          className="group relative overflow-hidden w-full flex items-center justify-center gap-3 py-4 text-base font-bold rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-cyan-500 text-white transition-all duration-300 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]"
+          className="btn-primary w-full flex items-center justify-center gap-3 py-5 text-sm font-black uppercase tracking-[0.2em] rounded-2xl disabled:opacity-30 disabled:grayscale transition-all"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
           {starting ? (
-            <><Loader2 className="w-5 h-5 animate-spin" /> Starting Competition...</>
+            <><Loader2 className="w-5 h-5 animate-spin" /> Syncing...</>
           ) : (
-            <><Maximize className="w-5 h-5 relative z-10" /> <span className="relative z-10">Launch Pitch Terminal</span><ChevronRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" /></>
+            <>Launch Terminal Protocol <ArrowRight className="w-5 h-5" /></>
           )}
         </button>
       </div>

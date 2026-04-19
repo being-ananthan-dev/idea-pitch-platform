@@ -8,6 +8,7 @@ import {
   advanceQuestion,
   submitSubmission,
   updateViolationCount,
+  saveAnswer,
 } from '@/lib/firestore';
 import { Submission, Config } from '@/types';
 import Timer from '@/components/Timer';
@@ -15,7 +16,7 @@ import ProgressBar from '@/components/ProgressBar';
 import WordCounter, { countWords } from '@/components/WordCounter';
 import ViolationBanner from '@/components/ViolationBanner';
 import { useAntiCheat } from '@/hooks/useAntiCheat';
-import { Loader2, Save, ArrowRight, Send } from 'lucide-react';
+import { Loader2, Save, ArrowRight, Send, LogOut } from 'lucide-react';
 import { useModal } from '@/context/ModalContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useConfig } from '@/context/ConfigContext';
@@ -23,7 +24,7 @@ import { useConfig } from '@/context/ConfigContext';
 const DRAFT_KEY = (uid: string, qi: number) => `intellipitch_draft_${uid}_q${qi}`;
 
 export default function CompetitionPage() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const { config: globalConfig } = useConfig();
 
@@ -47,32 +48,40 @@ export default function CompetitionPage() {
 
   const handleViolation = useCallback(
     async (type: 'tab_switch' | 'fullscreen_exit', _total: number) => {
-      if (!user || !submission) return;
-      const sub = submissionRef.current;
-      if (!sub) return;
-      const tabs = type === 'tab_switch' ? sub.tabSwitchCount + 1 : sub.tabSwitchCount;
-      const fs = type === 'fullscreen_exit' ? sub.fullscreenExitCount + 1 : sub.fullscreenExitCount;
-      submissionRef.current = { ...sub, tabSwitchCount: tabs, fullscreenExitCount: fs };
-      setSubmission((prev) => prev ? { ...prev, tabSwitchCount: tabs, fullscreenExitCount: fs } : prev);
-      await updateViolationCount(user.uid, tabs, fs);
+      // hook handles local state + direct atomic firestore update
+      // we only need to sync the local submissionRef for UI consistency
+      if (!submissionRef.current) return;
+      const penalty = type === 'tab_switch' ? 10 : 15;
+      const updated = {
+        ...submissionRef.current,
+        tabSwitchCount: submissionRef.current.tabSwitchCount + (type === 'tab_switch' ? 1 : 0),
+        fullscreenExitCount: submissionRef.current.fullscreenExitCount + (type === 'fullscreen_exit' ? 1 : 0),
+        integrityScore: Math.max(0, submissionRef.current.integrityScore - penalty)
+      };
+      submissionRef.current = updated;
+      setSubmission(updated);
     },
-    [user, submission]
+    []
   );
 
   const handleAutoSubmit = useCallback(
     async (reason: string) => {
-      if (submittingRef.current || !user || !submissionRef.current || !configRef.current) return;
+      if (submittingRef.current || !user || !submissionRef.current) return;
       submittingRef.current = true;
       setSubmitting(true);
-      const sub = submissionRef.current;
-      const qi = sub.questionIndex;
+      
       const draft = answerRef.current;
       const wc = countWords(draft);
-      await submitSubmission(user.uid, draft, wc, sub.tabSwitchCount, sub.fullscreenExitCount, reason);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(DRAFT_KEY(user.uid, qi), draft);
+      
+      try {
+        await submitSubmission(user.uid, draft, wc, reason);
+        localStorage.removeItem(DRAFT_KEY(user.uid, submissionRef.current.questionIndex));
+        navigate('/thankyou', { replace: true });
+      } catch (err) {
+        console.error('Final auto-submit failed', err);
+        setSubmitting(false);
+        submittingRef.current = false;
       }
-      navigate('/thankyou', { replace: true });
     },
     [user, navigate]
   );
@@ -130,19 +139,30 @@ export default function CompetitionPage() {
     const wc = countWords(text);
     const max = configRef.current?.maxWords ?? 350;
     if (wc > max && text.length > answerRef.current.length) return;
+    
     setAnswer(text);
     answerRef.current = text;
     setMinWordError('');
+    
     if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
     setAutoSaveStatus('saving');
-    autoSaveTimerRef.current = setTimeout(() => {
+    
+    autoSaveTimerRef.current = setTimeout(async () => {
       if (user) {
         const qi = submissionRef.current?.questionIndex ?? 0;
+        // Sync to local for reliability
         localStorage.setItem(DRAFT_KEY(user.uid, qi), text);
+        // Sync to Firestore for "Cyber Strong" persistence
+        try {
+          await saveAnswer(user.uid, qi, text, wc);
+          setAutoSaveStatus('saved');
+          setTimeout(() => setAutoSaveStatus('idle'), 2000);
+        } catch (err) {
+          console.error('Auto-save to firestore failed', err);
+          setAutoSaveStatus('idle'); // fail silently but stay idle
+        }
       }
-      setAutoSaveStatus('saved');
-      setTimeout(() => setAutoSaveStatus('idle'), 2000);
-    }, 800);
+    }, 1200);
   };
 
   const handleTimerExpire = useCallback(async () => {
@@ -206,7 +226,7 @@ export default function CompetitionPage() {
       setSubmitting(false);
       submittingRef.current = false;
     } else {
-      await submitSubmission(user.uid, draft, wc, tabSwitchCount, fullscreenExitCount);
+      await submitSubmission(user.uid, draft, wc);
       localStorage.removeItem(DRAFT_KEY(user.uid, qi));
       navigate('/thankyou', { replace: true });
     }
@@ -231,7 +251,9 @@ export default function CompetitionPage() {
   const question = config.questions[qi];
   const allowedTime = question?.timer ?? 120;
   const isLastQuestion = qi === config.questions.length - 1;
-  const integrityScore = Math.max(0, 100 - tabSwitchCount * 10 - fullscreenExitCount * 15);
+  
+  // Local calc should match firestore.ts logic for UI consistency
+  const integrityScore = Math.max(0, 100 - (tabSwitchCount * 10) - (fullscreenExitCount * 15));
   const totalViolations = tabSwitchCount + fullscreenExitCount;
 
   if (!question) return null;
@@ -281,35 +303,42 @@ export default function CompetitionPage() {
         />
       )}
 
-      <header className="border-b border-white/5 bg-[#080d19]/80 backdrop-blur-xl px-4 sm:px-8 py-3.5 relative z-20">
-        <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
+      <header className="border-b border-white/5 bg-[#010309]/80 backdrop-blur-3xl px-4 sm:px-8 py-3 relative z-20">
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-2.5 shrink-0">
-            <span className="text-xl shadow-[0_0_10px_rgba(59,130,246,0.3)] bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-md p-1">💡</span>
-            <span className="font-extrabold text-sm tracking-tight text-white hidden md:block">IntelliPitch</span>
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-sm shadow-lg shadow-blue-500/20">💡</div>
+            <span className="font-black text-[10px] tracking-tighter text-white uppercase italic hidden md:block">Pitch Terminal v2.0</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 font-mono tabular-nums">
             <Timer
               questionStartTime={submission.questionStartTime as Timestamp}
               allowedTime={allowedTime}
               onExpire={handleTimerExpire}
             />
           </div>
-          <div className="flex items-center gap-3 sm:gap-4 shrink-0 text-xs font-semibold text-gray-500">
+          <div className="flex items-center gap-3 sm:gap-4 shrink-0 font-black">
             {autoSaveStatus !== 'idle' && (
               <motion.span 
                 initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                className={`hidden sm:flex items-center gap-1.5 ${autoSaveStatus === 'saving' ? 'text-gray-500' : 'text-green-400'}`}
+                className={`hidden sm:flex items-center gap-1.5 text-[9px] uppercase tracking-widest ${autoSaveStatus === 'saving' ? 'text-gray-500' : 'text-emerald-400'}`}
               >
-                <Save className="w-3.5 h-3.5" />
-                {autoSaveStatus === 'saving' ? 'Saving' : 'Saved'}
+                <div className={`w-1 h-1 rounded-full ${autoSaveStatus === 'saving' ? 'bg-gray-500 animate-pulse' : 'bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.5)]'}`} />
+                {autoSaveStatus === 'saving' ? 'Syncing' : 'Buffered'}
               </motion.span>
             )}
-            <div className={`badge ${integrityScore >= 70 ? 'badge-green' : integrityScore >= 40 ? 'badge-yellow' : 'badge-red'} scale-90 sm:scale-100`}>
-              🛡️ {integrityScore}
+            <div className={`badge ${integrityScore >= 70 ? 'badge-green' : integrityScore >= 40 ? 'badge-yellow' : 'badge-red'} scale-90 sm:scale-100 font-mono text-[10px]`}>
+              {integrityScore}%
             </div>
             {totalViolations > 0 && (
-              <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 0.3 }} className="badge badge-red scale-90 sm:scale-100">⚠️ {totalViolations}/3</motion.div>
+              <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 0.3 }} className="badge badge-red scale-90 sm:scale-100 font-mono text-[10px]">ERR: {totalViolations}/3</motion.div>
             )}
+            <button 
+              onClick={signOut}
+              className="w-8 h-8 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center text-gray-500 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-all ml-1"
+              title="Sign out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </header>
@@ -338,15 +367,16 @@ export default function CompetitionPage() {
               transition={{ x: { type: "spring", stiffness: 300, damping: 30 }, opacity: { duration: 0.2 } }}
               className="absolute inset-0 w-full h-full glass-card p-6 md:p-8 flex flex-col gap-5 border border-white/5"
             >
-              <div className="shrink-0">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="text-2xl">{question.emoji}</span>
-                  <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-semibold text-blue-400 tracking-wider uppercase">
-                    Question {qi + 1} of {config.questions.length}
-                  </span>
+              <div className="shrink-0 mb-2">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-black italic text-blue-400 tracking-widest uppercase shadow-inner">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                    Protocol Phase {qi + 1}
+                  </div>
+                  <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest opacity-40">System ready // Waiting for input</span>
                 </div>
-                <h2 className="text-2xl font-black text-white mb-3 tracking-tight">{question.title}</h2>
-                <div className="text-gray-300 leading-relaxed text-sm bg-white/5 rounded-xl p-4 border border-white/5 max-h-[140px] overflow-y-auto">
+                <h2 className="text-3xl font-black text-white mb-4 tracking-tighter leading-none">{question.title}</h2>
+                <div className="text-gray-400 leading-relaxed text-sm bg-[#050810] rounded-xl p-5 border border-white/5 max-h-[140px] overflow-y-auto font-medium">
                   {question.prompt}
                 </div>
               </div>
@@ -364,10 +394,12 @@ export default function CompetitionPage() {
                     value={answer}
                     onChange={handleAnswerChange}
                     disabled={submitting}
-                    placeholder="Formulate your response here... (auto-saves locally)"
-                    className="input-field resize-none flex-1 leading-[1.7] text-[0.95rem] bg-[#0A0F1A] hover:bg-[#0C1220] transition-colors border-white/10 shadow-inner z-10 p-5"
+                    placeholder="Initialise transcription..."
+                    className="input-field resize-none flex-1 leading-[1.8] text-[0.95rem] bg-[#02040A] hover:bg-[#03060F] transition-all border border-white/10 shadow-2xl p-6 font-inter text-gray-200 placeholder:text-gray-800 focus:border-blue-500/40 rounded-2xl"
                   />
-                  <div className="absolute inset-0 -m-0.5 rounded-[14px] bg-gradient-to-r from-blue-500 to-cyan-500 opacity-0 group-focus-within:opacity-20 blur transition-opacity duration-300 pointer-events-none z-0"></div>
+                  <div className="absolute bottom-6 right-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-700 pointer-events-none z-20">
+                    Terminal Transcription Active // AI Guard v2
+                  </div>
                 </div>
 
                 <div className="flex items-end justify-between mt-3 shrink-0 px-1">

@@ -5,11 +5,10 @@ import { useAuth } from '@/context/AuthContext';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import {
   ArrowUpRight, Zap, CheckCircle2, ChevronRight,
-  LogOut, Lock, Timer,
+  LogOut, Lock, Timer, ArrowRight,
 } from 'lucide-react';
 import { useModal } from '@/context/ModalContext';
 
-// ── Shared Animation Variants ──────────────────────────────────
 const FADE_UP = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] } }
@@ -23,21 +22,22 @@ const STAGGER_CONTAINER = {
   }
 };
 
-// ── Step Card ─────────────────────────────────────────────
-function StepCard({ step, title, desc, isLast }: { step: number; title: string; desc: string; isLast?: boolean }) {
+// ── Bento Card ─────────────────────────────────────────────
+function BentoCard({ step, title, desc, icon, className = "" }: { step: number; title: string; desc: string; icon: React.ReactNode; className?: string }) {
   return (
     <motion.div 
       variants={FADE_UP}
-      className="flex gap-6 relative"
+      whileHover={{ y: -5, transition: { duration: 0.2 } }}
+      className={`bento-item group ${className}`}
     >
-      <div className="flex flex-col items-center gap-0">
-        <div className="relative w-12 h-12 rounded-full bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400 font-black text-lg shrink-0 z-10 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+      <div className="absolute top-6 right-6 text-4xl opacity-20 group-hover:opacity-40 transition-opacity duration-500">
+        {icon}
+      </div>
+      <div className="flex flex-col h-full">
+        <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-black text-sm mb-6 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
           {step}
         </div>
-        {!isLast && <div className="w-px flex-1 bg-gradient-to-b from-blue-500/40 to-transparent mt-2 mb-0 min-h-[3rem]" />}
-      </div>
-      <div className="pb-12">
-        <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
+        <h3 className="text-xl font-black text-white mb-3 tracking-tight group-hover:text-blue-400 transition-colors">{title}</h3>
         <p className="text-gray-400 text-sm leading-relaxed">{desc}</p>
       </div>
     </motion.div>
@@ -53,8 +53,8 @@ export default function HomePage() {
 
   // Scroll parallax effects
   const { scrollY } = useScroll();
-  const heroY = useTransform(scrollY, [0, 500], [0, 150]);
-  const opacityFade = useTransform(scrollY, [0, 300], [1, 0]);
+  const heroY = useTransform(scrollY, [0, 500], [0, 100]);
+  const opacityFade = useTransform(scrollY, [0, 400], [1, 0]);
 
   const handleEnterEvent = () => {
     if (submissionStatus === 'submitted' || submissionStatus === 'locked') {
@@ -75,104 +75,90 @@ export default function HomePage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="selection:bg-blue-500/30 bg-mesh min-h-screen"
+      className="selection:bg-violet-500/30 bg-mesh min-h-screen font-inter"
     >
       {/* ── Navbar ────── */}
-      <nav className="sticky top-0 z-50 w-full h-20 border-b border-white/[0.06] bg-[#030712]/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 h-full flex items-center justify-between">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="flex items-center gap-3"
-          >
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-xl shadow-[0_0_20px_rgba(59,130,246,0.5)]">
-              💡
-            </div>
-            <div>
-              <span className="font-extrabold text-[1.1rem] tracking-tight text-white">IntelliPitch</span>
-              <div className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-0.5">IEEE SB MCET</div>
-            </div>
-          </motion.div>
+      <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl h-16 glass-card rounded-full border border-white/10 px-6 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-base shadow-lg shadow-blue-500/20">
+            💡
+          </div>
+          <span className="font-black text-sm tracking-tighter text-white uppercase italic">IntelliPitch</span>
+        </div>
 
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="flex items-center gap-4"
-          >
-            {user && (
-              <div className="hidden sm:flex items-center gap-3 bg-white/[0.04] border border-white/[0.08] rounded-full px-4 py-2">
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold text-xs">
-                  {user.displayName?.charAt(0).toUpperCase()}
-                </div>
-                <span className="text-sm font-semibold text-gray-200 max-w-[140px] truncate">{user.displayName}</span>
-                <button onClick={signOut} className="text-gray-500 hover:text-red-400 transition-colors ml-1" title="Sign out">
-                  <LogOut className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            )}
-            <button onClick={handleEnterEvent} className="btn-primary flex items-center gap-2 group text-sm px-6 py-2">
+        <div className="flex items-center gap-4">
+          {user && (
+            <div className="hidden sm:flex items-center gap-3 pr-2 border-r border-white/10 mr-1">
+              <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{user.displayName}</span>
+            </div>
+          )}
+          <div className="flex items-center gap-3">
+            <button onClick={handleEnterEvent} className="btn-primary flex items-center gap-2 text-[11px] px-5 py-2 uppercase tracking-widest rounded-full">
               Enter Arena
-              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
-          </motion.div>
+            {user && (
+              <button 
+                onClick={signOut} 
+                className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-gray-400 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-all shadow-lg"
+                title="Sign out"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </div>
       </nav>
 
       {/* ── HERO ── */}
-      <section className="main-container pt-24 pb-28 relative overflow-hidden">
+      <section className="main-container pt-44 pb-28 relative overflow-hidden">
         <motion.div 
-          style={{ y: heroY, opacity: opacityFade }}
+          style={{ y: heroY }}
           className="flex flex-col items-center text-center relative z-10"
         >
           <motion.div 
             variants={STAGGER_CONTAINER}
             initial="hidden"
             animate="visible"
-            className="flex flex-col items-center gap-7 max-w-3xl"
+            className="flex flex-col items-center gap-8 max-w-4xl"
           >
-            <motion.div variants={FADE_UP} className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 backdrop-blur text-sm shadow-[0_0_30px_rgba(59,130,246,0.15)]">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500 border border-blue-300"></span>
-              </span>
-              <span className="text-blue-300 font-semibold text-xs uppercase tracking-widest">Live Competition Open</span>
+            <motion.div variants={FADE_UP} className="px-5 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/20 backdrop-blur text-[10px] font-black uppercase tracking-[0.3em] text-violet-400 shadow-xl shadow-violet-500/10">
+              Innovation Engine v2.0
             </motion.div>
 
             <motion.div variants={FADE_UP} className="w-full">
-              <h1 className="text-5xl sm:text-6xl md:text-7xl font-black leading-[1.08] tracking-tight text-white pb-2 overflow-visible">
+              <h1 className="text-6xl sm:text-7xl md:text-8xl font-black leading-[0.95] tracking-tighter text-white pb-4">
                 Pitch Your<br />
-                <span className="gradient-text-animated filter drop-shadow-[0_0_40px_rgba(59,130,246,0.4)]">Masterpiece.</span>
+                <span className="gradient-text-animated filter drop-shadow-[0_0_50px_rgba(139,92,246,0.3)]">Masterpiece.</span>
               </h1>
             </motion.div>
 
-            <motion.p variants={FADE_UP} className="text-lg text-gray-400 leading-relaxed w-full max-w-2xl px-2 sm:px-0 text-center">
-              Step into the high-stakes arena. Architect solutions to real-world problems under pressure — judged blind, timed to the millisecond.
+            <motion.p variants={FADE_UP} className="text-lg text-gray-400 leading-relaxed w-full max-w-2xl px-2 sm:px-0 font-medium">
+              The high-stakes arena for architects of the future. Proof your vision under pressure — judged blind, timed to the millisecond.
             </motion.p>
 
             <motion.div variants={FADE_UP} className="flex flex-col sm:flex-row items-center justify-center gap-5 pt-4">
               <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.05, filter: "brightness(1.2)" }}
+                whileTap={{ scale: 0.95 }}
                 onClick={handleEnterEvent}
-                className="btn-primary group flex items-center gap-3 text-base px-8 py-4"
+                className="btn-primary group flex items-center gap-3 text-sm font-black uppercase tracking-widest px-10 py-5 rounded-2xl"
               >
-                <Zap className="w-5 h-5 fill-[#030712]" />
-                Start Pitching
+                <Zap className="w-5 h-5 fill-white" />
+                Launch Terminal
                 <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </motion.button>
             </motion.div>
 
-            <motion.div variants={FADE_UP} className="flex flex-wrap justify-center gap-3 pt-6">
+            <motion.div variants={FADE_UP} className="flex flex-wrap justify-center gap-6 pt-10">
               {[
-                { icon: Lock, text: 'Fully Secure' },
-                { icon: CheckCircle2, text: 'Blind Judged' },
-                { icon: Timer, text: 'Server-Synced' },
+                { icon: Lock, text: 'Encrypted' },
+                { icon: CheckCircle2, text: 'Blind-Judged' },
+                { icon: Timer, text: 'Real-Time' },
               ].map(({ icon: Icon, text }) => (
-                <div key={text} className="flex items-center gap-2 bg-white/[0.02] border border-white/[0.05] rounded-full px-4 py-2 text-xs font-semibold text-gray-400">
-                  <Icon className="w-3.5 h-3.5 text-blue-400" />
-                  {text}
+                <div key={text} className="flex items-center gap-2 opacity-40 hover:opacity-100 transition-opacity">
+                  <Icon className="w-4 h-4 text-blue-400" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-white">{text}</span>
                 </div>
               ))}
             </motion.div>
@@ -181,86 +167,86 @@ export default function HomePage() {
       </section>
 
       {/* ── TICKER TAPE ── */}
-      <div className="border-y border-white/[0.04] bg-white/[0.01] py-4 overflow-hidden relative backdrop-blur-sm">
-        <div className="ticker-tape text-[12px] font-bold uppercase tracking-widest text-gray-500 gap-12">
+      <div className="border-y border-white/[0.04] bg-white/[0.01] py-5 overflow-hidden relative backdrop-blur-md">
+        <div className="ticker-tape text-[10px] sm:text-[11px] font-black uppercase tracking-[0.4em] text-gray-600 gap-16">
           {[...Array(2)].map((_, i) => (
-            <div key={i} className="flex gap-12 items-center shrink-0">
+            <div key={i} className="flex gap-16 items-center shrink-0">
               {['⏱ Timed Challenges', '🛡 Anti-Cheat Engine', '📊 Blind Evaluations', '🏆 ₹10,000 Prize Pool', '🔒 Data Encrypted', '⚡ Auto-Save Active', '📋 3 Questions', '👁 Zero Bias Scoring'].map((t) => (
-                <span key={t} className="inline-flex items-center gap-2">{t}</span>
+                <span key={t} className="inline-flex items-center gap-2 text-white/50">{t}</span>
               ))}
             </div>
           ))}
         </div>
       </div>
 
-      {/* ── HOW IT WORKS ── */}
-      <section className="border-t border-white/[0.04] py-32 relative">
+      {/* ── BENTO SECTION ── */}
+      <section className="py-32 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-start">
-            
-            {/* Left Copy */}
-            <motion.div 
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              variants={STAGGER_CONTAINER}
-              className="sticky top-32"
-            >
-              <motion.div variants={FADE_UP} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-xs font-bold text-cyan-400 uppercase tracking-widest mb-6">
-                <Zap className="w-3.5 h-3.5" />
-                How It Works
-              </motion.div>
-              <motion.h2 variants={FADE_UP} className="text-4xl md:text-5xl font-black leading-tight mb-6 text-white">
-                From Login to<br /><span className="gradient-text filter drop-shadow-[0_0_30px_rgba(6,182,212,0.3)]">Trophy.</span>
-              </motion.h2>
-              <motion.p variants={FADE_UP} className="text-gray-400 leading-relaxed text-lg mb-10 max-w-md">
-                The entire competition is automated and takes fewer than 15 minutes. Follow the four steps and let your idea speak for itself.
-              </motion.p>
-              <motion.button 
-                variants={FADE_UP}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleEnterEvent} 
-                className="btn-primary flex items-center gap-3 text-base px-8 py-4 group"
-              >
-                <Zap className="w-5 h-5 fill-[#030712]" />
-                Begin Journey
-                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </motion.button>
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={STAGGER_CONTAINER}
+            className="flex flex-col items-center text-center mb-16"
+          >
+            <motion.div variants={FADE_UP} className="text-blue-500 font-black text-[10px] uppercase tracking-[0.5em] mb-4">
+              Protocol Flow
             </motion.div>
+            <motion.h2 variants={FADE_UP} className="text-4xl md:text-6xl font-black text-white tracking-tighter">
+              From Concept to <span className="text-violet-500">Submission.</span>
+            </motion.h2>
+          </motion.div>
 
-            {/* Right Steps */}
-            <motion.div 
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-50px" }}
-              variants={STAGGER_CONTAINER}
-              className="flex flex-col pt-2"
-            >
-              <StepCard step={1} title="Sign In & Register" desc="Log in with your Google account and complete a one-time detail form with your name, email, and phone." />
-              <StepCard step={2} title="Read the Guidelines" desc="Carefully review the competition rules, evaluation criteria, and what happens when the timer begins." />
-              <StepCard step={3} title="Answer Three Questions" desc="Answer Problem Statement, Proposed Solution, and Impact — each with a strict server-side countdown." />
-              <StepCard step={4} title="Submit & Await Results" desc="Once you submit, our blind evaluation panel scores your ideas on 4 criteria out of 40 points." isLast />
-            </motion.div>
+          {/* Bento Grid Layout */}
+          <div className="bento-grid">
+            <BentoCard 
+              step={1} 
+              title="Secure Entry" 
+              desc="Instant Google authentication ensures your identity is verified and your seat is reserved in the digital arena." 
+              icon={<Lock className="w-full h-full" />}
+              className="lg:col-span-2 lg:row-span-2"
+            />
+            <BentoCard 
+              step={2} 
+              title="Neural Sync" 
+              desc="Review strict guidelines. Fullscreen mode and tab-switching monitoring activate to maintain pure competition integrity." 
+              icon={<Zap className="w-full h-full text-violet-500" />}
+              className="lg:col-span-2 lg:row-span-1"
+            />
+            <BentoCard 
+              step={3} 
+              title="The Sprint" 
+              desc="3 high-pressure questions. Problem, Solution, Impact. Each with a relentless server-side countdown." 
+              icon={<Timer className="w-full h-full text-blue-500" />}
+              className="lg:col-span-1 lg:row-span-1"
+            />
+             <BentoCard 
+              step={4} 
+              title="Blind Review" 
+              desc="Your identity is scrubbed. Judges score your pitch on metrics alone. Pure meritocracy." 
+              icon={<CheckCircle2 className="w-full h-full text-emerald-500" />}
+              className="lg:col-span-1 lg:row-span-1"
+            />
           </div>
         </div>
       </section>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-white/[0.04] bg-[#02040A] py-10 px-4">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-          <div className="flex items-center gap-2 opacity-80">
-            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-xs shadow-lg">💡</div>
-            <span className="font-semibold text-gray-400">IntelliPitch</span>
-            <span>·</span>
-            <span>© 2026 IEEE SB MCET</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs opacity-70">
-            <Lock className="w-3 h-3 text-green-500" />
-            <span className="text-gray-500">Secured by Firebase · All Rights Reserved</span>
-          </div>
+      <footer className="border-t border-white/[0.04] bg-[#02040A] py-16 px-4">
+        <div className="max-w-7xl mx-auto flex flex-col items-center gap-8 text-center">
+           <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-2xl shadow-2xl shadow-blue-500/30">💡</div>
+           <div>
+             <div className="font-black text-white text-lg tracking-tighter uppercase mb-2">IntelliPitch</div>
+             <p className="text-gray-500 text-xs mb-8">© 2026 IEEE SB MCET — CREATED FOR THE ARCHITECTS OF TOMORROW</p>
+           </div>
+           <div className="flex items-center gap-6 text-[10px] font-bold text-gray-600 uppercase tracking-widest">
+             <span className="hover:text-white cursor-pointer transition-colors">Privacy</span>
+             <span className="hover:text-white cursor-pointer transition-colors">Guidelines</span>
+             <span className="hover:text-white cursor-pointer transition-colors">Contact</span>
+           </div>
         </div>
       </footer>
     </motion.div>
   );
 }
+

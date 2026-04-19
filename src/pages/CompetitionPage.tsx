@@ -1,7 +1,5 @@
-'use client';
-
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Timestamp } from 'firebase/firestore';
 import {
@@ -21,12 +19,11 @@ import { useAntiCheat } from '@/hooks/useAntiCheat';
 import { Loader2, Save, ArrowRight, Send } from 'lucide-react';
 import { useModal } from '@/context/ModalContext';
 
-// Removed hardcoded QUESTIONS array — now fetched from Firestore config
 const DRAFT_KEY = (uid: string, qi: number) => `intellipitch_draft_${uid}_q${qi}`;
 
 export default function CompetitionPage() {
   const { user } = useAuth();
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const [submission, setSubmission] = useState<Submission | null>(null);
   const [config, setConfig] = useState<Config | null>(null);
@@ -37,27 +34,21 @@ export default function CompetitionPage() {
   const [minWordError, setMinWordError] = useState('');
   const { showModal } = useModal();
 
-  // Refs for stable callback refs in interval/event handlers
   const answerRef = useRef('');
   const submissionRef = useRef<Submission | null>(null);
   const configRef = useRef<Config | null>(null);
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const submittingRef = useRef(false);
 
-  // ─── Anti-Cheat ───────────────────────────────────────────────────────────
-
   const handleViolation = useCallback(
-    async (type: 'tab_switch' | 'fullscreen_exit', total: number) => {
+    async (type: 'tab_switch' | 'fullscreen_exit', _total: number) => {
       if (!user || !submission) return;
       const sub = submissionRef.current;
       if (!sub) return;
       const tabs = type === 'tab_switch' ? sub.tabSwitchCount + 1 : sub.tabSwitchCount;
       const fs = type === 'fullscreen_exit' ? sub.fullscreenExitCount + 1 : sub.fullscreenExitCount;
-      // Update ref immediately
       submissionRef.current = { ...sub, tabSwitchCount: tabs, fullscreenExitCount: fs };
-      setSubmission((prev) =>
-        prev ? { ...prev, tabSwitchCount: tabs, fullscreenExitCount: fs } : prev
-      );
+      setSubmission((prev) => prev ? { ...prev, tabSwitchCount: tabs, fullscreenExitCount: fs } : prev);
       await updateViolationCount(user.uid, tabs, fs);
     },
     [user, submission]
@@ -72,21 +63,13 @@ export default function CompetitionPage() {
       const qi = sub.questionIndex;
       const draft = answerRef.current;
       const wc = countWords(draft);
-      await submitSubmission(
-        user.uid,
-        draft,
-        wc,
-        sub.tabSwitchCount,
-        sub.fullscreenExitCount,
-        reason
-      );
-      // Save to localStorage as backup
+      await submitSubmission(user.uid, draft, wc, sub.tabSwitchCount, sub.fullscreenExitCount, reason);
       if (typeof window !== 'undefined') {
         localStorage.setItem(DRAFT_KEY(user.uid, qi), draft);
       }
-      router.replace('/thankyou');
+      navigate('/thankyou', { replace: true });
     },
-    [user, router]
+    [user, navigate]
   );
 
   const {
@@ -105,35 +88,25 @@ export default function CompetitionPage() {
     enabled: !loading && !submitting,
   });
 
-  // ─── Load Submission & Config ─────────────────────────────────────────────
-
   useEffect(() => {
     if (!user) return;
-
     const load = async () => {
       try {
         const [sub, cfg] = await Promise.all([getSubmission(user.uid), getConfig()]);
-
-        if (!sub) { router.replace('/guidelines'); return; }
+        if (!sub) { navigate('/guidelines', { replace: true }); return; }
         if (sub.status === 'submitted' || sub.status === 'locked') {
-          router.replace('/thankyou'); return;
+          navigate('/thankyou', { replace: true }); return;
         }
-
         submissionRef.current = sub;
         configRef.current = cfg;
         setSubmission(sub);
         setConfig(cfg);
-
-        // Restore draft from localStorage
         const draftKey = DRAFT_KEY(user.uid, sub.questionIndex);
         const savedDraft = typeof window !== 'undefined' ? localStorage.getItem(draftKey) : null;
-        // Also check stored answers in Firestore
         const storedAnswer = sub.answers?.find((a) => a.questionIndex === sub.questionIndex);
         const initialText = savedDraft || storedAnswer?.text || '';
         setAnswer(initialText);
         answerRef.current = initialText;
-
-        // Restore violation counts
         initCounts(sub.tabSwitchCount, sub.fullscreenExitCount);
       } catch (err) {
         console.error('Failed to load competition state', err);
@@ -141,24 +114,17 @@ export default function CompetitionPage() {
         setLoading(false);
       }
     };
-
     load();
-  }, [user, router, initCounts]);
-
-  // ─── Auto-save draft to localStorage on each keystroke ───────────────────
+  }, [user, navigate, initCounts]);
 
   const handleAnswerChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const text = e.target.value;
-    // Enforce word limit: don't allow typing if word count > max
     const wc = countWords(text);
     const max = configRef.current?.maxWords ?? 350;
-    if (wc > max && text.length > answerRef.current.length) return; // block adding more
-
+    if (wc > max && text.length > answerRef.current.length) return;
     setAnswer(text);
     answerRef.current = text;
     setMinWordError('');
-
-    // Auto-save to localStorage with debounce
     if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
     setAutoSaveStatus('saving');
     autoSaveTimerRef.current = setTimeout(() => {
@@ -171,8 +137,6 @@ export default function CompetitionPage() {
     }, 800);
   };
 
-  // ─── Timer expire handler ─────────────────────────────────────────────────
-
   const handleTimerExpire = useCallback(async () => {
     if (submittingRef.current || !user || !submissionRef.current || !configRef.current) return;
     const sub = submissionRef.current;
@@ -180,31 +144,23 @@ export default function CompetitionPage() {
     const draft = answerRef.current;
     const wc = countWords(draft);
     const totalQ = configRef.current.questions.length;
-
     if (qi < totalQ - 1) {
-      // Advance to next question
       const nextQi = qi + 1;
       await advanceQuestion(user.uid, nextQi, draft, wc);
-      // Clear localStorage for this question, set next
       localStorage.removeItem(DRAFT_KEY(user.uid, qi));
-
       const updatedSub = await getSubmission(user.uid);
       if (updatedSub) {
         submissionRef.current = updatedSub;
         setSubmission(updatedSub);
-        // Restore draft for next question if any
         const nextDraft = localStorage.getItem(DRAFT_KEY(user.uid, nextQi)) || '';
         setAnswer(nextDraft);
         answerRef.current = nextDraft;
         setMinWordError('');
       }
     } else {
-      // Final question expired — auto submit
       await handleAutoSubmit('Timer expired on final question');
     }
   }, [user, handleAutoSubmit]);
-
-  // ─── Manual Next / Submit ─────────────────────────────────────────────────
 
   const handleNext = async () => {
     if (!user || !submission || !config) return;
@@ -213,20 +169,16 @@ export default function CompetitionPage() {
     const wc = countWords(draft);
     const min = config.minWords ?? 30;
     const totalQ = config.questions.length;
-
     if (wc < min) {
       setMinWordError(`Please write at least ${min} words before proceeding. Current: ${wc} words.`);
       return;
     }
-
     setSubmitting(true);
     submittingRef.current = true;
-
     if (qi < totalQ - 1) {
       const nextQi = qi + 1;
       await advanceQuestion(user.uid, nextQi, draft, wc);
       localStorage.removeItem(DRAFT_KEY(user.uid, qi));
-
       const updatedSub = await getSubmission(user.uid);
       if (updatedSub) {
         submissionRef.current = updatedSub;
@@ -239,20 +191,11 @@ export default function CompetitionPage() {
       setSubmitting(false);
       submittingRef.current = false;
     } else {
-      // Final submit
-      await submitSubmission(
-        user.uid,
-        draft,
-        wc,
-        tabSwitchCount,
-        fullscreenExitCount
-      );
+      await submitSubmission(user.uid, draft, wc, tabSwitchCount, fullscreenExitCount);
       localStorage.removeItem(DRAFT_KEY(user.uid, qi));
-      router.replace('/thankyou');
+      navigate('/thankyou', { replace: true });
     }
   };
-
-  // ─── Disable back navigation ──────────────────────────────────────────────
 
   useEffect(() => {
     window.history.pushState(null, '', window.location.href);
@@ -260,8 +203,6 @@ export default function CompetitionPage() {
     window.addEventListener('popstate', preventBack);
     return () => window.removeEventListener('popstate', preventBack);
   }, []);
-
-  // ─── Render ───────────────────────────────────────────────────────────────
 
   if (loading || !submission || !config) {
     return (
@@ -279,11 +220,10 @@ export default function CompetitionPage() {
   const integrityScore = Math.max(0, 100 - tabSwitchCount * 10 - fullscreenExitCount * 15);
   const totalViolations = tabSwitchCount + fullscreenExitCount;
 
-  if (!question) return null; // Safety check
+  if (!question) return null;
 
   return (
     <div className="h-[100dvh] bg-bg flex flex-col overflow-hidden">
-      {/* Anti-cheat Banner */}
       {showBanner && lastViolationType && (
         <ViolationBanner
           count={totalViolations}
@@ -293,16 +233,12 @@ export default function CompetitionPage() {
         />
       )}
 
-      {/* Top Bar */}
       <header className="border-b border-white/5 bg-black/30 backdrop-blur-md px-4 sm:px-8 py-3">
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
-          {/* Logo */}
           <div className="flex items-center gap-2 shrink-0">
             <span className="text-lg">💡</span>
             <span className="font-bold text-sm gradient-text hidden sm:block">IntelliPitch</span>
           </div>
-
-          {/* Timer */}
           <div className="flex items-center gap-2">
             <Timer
               questionStartTime={submission.questionStartTime as Timestamp}
@@ -310,8 +246,6 @@ export default function CompetitionPage() {
               onExpire={handleTimerExpire}
             />
           </div>
-
-          {/* Status */}
           <div className="flex items-center gap-3 shrink-0 text-xs text-gray-400">
             {autoSaveStatus !== 'idle' && (
               <span className={`flex items-center gap-1 ${autoSaveStatus === 'saving' ? 'text-gray-500' : 'text-green-400'}`}>
@@ -319,33 +253,26 @@ export default function CompetitionPage() {
                 {autoSaveStatus === 'saving' ? 'Auto-saving...' : 'Saved'}
               </span>
             )}
-            {/* Integrity */}
             <div className={`badge ${integrityScore >= 70 ? 'badge-green' : integrityScore >= 40 ? 'badge-yellow' : 'badge-red'}`}>
               🛡️ {integrityScore}
             </div>
-            {/* Violations */}
             {totalViolations > 0 && (
-              <div className="badge badge-red">
-                ⚠️ {totalViolations}/3
-              </div>
+              <div className="badge badge-red">⚠️ {totalViolations}/3</div>
             )}
           </div>
         </div>
       </header>
 
       <main className="flex-1 main-container py-6 md:py-10 flex flex-col gap-6 overflow-hidden">
-        {/* Progress */}
         <div className="animate-fade-in">
-          <ProgressBar 
-            currentQuestion={qi} 
-            total={config.questions.length} 
+          <ProgressBar
+            currentQuestion={qi}
+            total={config.questions.length}
             labels={config.questions.map(q => q.title)}
           />
         </div>
 
-        {/* Question Card */}
         <div className="glass-card p-6 md:p-8 animate-fade-in-up flex-1 flex flex-col gap-5 min-h-0">
-          {/* Question Header */}
           <div className="shrink-0">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xl">{question.emoji}</span>
@@ -357,7 +284,6 @@ export default function CompetitionPage() {
             </div>
           </div>
 
-          {/* Answer Textarea */}
           <div className="flex flex-col flex-1 min-h-0">
             <label className="text-xs font-medium text-gray-400 mb-1.5 flex items-center justify-between uppercase tracking-wider px-1">
               <span>Your Answer</span>
@@ -368,14 +294,13 @@ export default function CompetitionPage() {
               value={answer}
               onChange={handleAnswerChange}
               disabled={submitting}
-              placeholder={`Start typing your answer here...`}
+              placeholder="Start typing your answer here..."
               className="input-field resize-none flex-1 leading-relaxed text-base"
               style={{ fontFamily: 'var(--font-inter)' }}
             />
             <div className="shrink-0 mt-2">
               <WordCounter text={answer} min={config.minWords} max={config.maxWords} />
             </div>
-
             {minWordError && (
               <p className="text-red-400 text-xs mt-2 flex items-center gap-1.5 shrink-0">
                 ⚠️ {minWordError}
@@ -383,7 +308,6 @@ export default function CompetitionPage() {
             )}
           </div>
 
-          {/* Submit / Next Button */}
           <div className="flex justify-end shrink-0">
             <button
               id={isLastQuestion ? 'submit-btn' : `next-q${qi}-btn`}
@@ -403,7 +327,6 @@ export default function CompetitionPage() {
           </div>
         </div>
 
-        {/* Bottom hint */}
         <p className="text-center text-xs text-gray-600 pb-2">
           ⚠️ Do not switch tabs or exit fullscreen · Timer runs server-side · Answers auto-save
         </p>

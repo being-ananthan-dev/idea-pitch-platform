@@ -1,16 +1,14 @@
-'use client';
-
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { getSubmission, getConfig } from '@/lib/firestore';
 import { Submission, Config } from '@/types';
 import { Loader2, CheckCircle, Home, Shield, Clock } from 'lucide-react';
 import { useModal } from '@/context/ModalContext';
 
-export default function ThankYouPage() {
+export default function ThankyouPage() {
   const { user, loading: authLoading } = useAuth();
-  const router = useRouter();
+  const navigate = useNavigate();
   const { showModal } = useModal();
   const [submission, setSubmission] = useState<Submission | null>(null);
   const [config, setConfig] = useState<Config | null>(null);
@@ -18,31 +16,30 @@ export default function ThankYouPage() {
 
   useEffect(() => {
     if (authLoading) return;
-    if (!user) { router.replace('/login'); return; }
+    if (!user) { navigate('/login', { replace: true }); return; }
 
     const load = async () => {
       try {
         const [sub, cfg] = await Promise.all([getSubmission(user.uid), getConfig()]);
         
         if (!sub || (sub.status !== 'submitted' && sub.status !== 'locked')) {
-          router.replace('/'); return;
+          navigate('/', { replace: true }); return;
         }
         setSubmission(sub);
         setConfig(cfg);
         setLoading(false);
-      } catch (err) {
+      } catch {
         showModal({
           title: 'Error',
           message: 'Failed to load submission details. Please try again.',
           type: 'error'
         });
-        router.replace('/');
+        navigate('/');
       }
     };
     load();
-  }, [user, authLoading, router, showModal]);
+  }, [user, authLoading, navigate, showModal]);
 
-  // Disable back button
   useEffect(() => {
     window.history.pushState(null, '', window.location.href);
     const preventBack = () => window.history.pushState(null, '', window.location.href);
@@ -74,7 +71,6 @@ export default function ThankYouPage() {
   return (
     <div className="auth-container">
       <div className="w-full max-w-lg animate-fade-in-up">
-        {/* Success Icon */}
         <div className="text-center mb-8">
           <div className="relative inline-block">
             <div
@@ -87,9 +83,7 @@ export default function ThankYouPage() {
               <CheckCircle className="w-12 h-12 text-white" />
             </div>
           </div>
-          <h1 className="text-4xl font-extrabold text-white mb-2">
-            Submission Complete! 🎉
-          </h1>
+          <h1 className="text-4xl font-extrabold text-white mb-2">Submission Complete! 🎉</h1>
           <p className="text-gray-400 max-w-sm mx-auto text-sm leading-relaxed">
             {submission?.autoSubmitReason
               ? `Your answers were automatically submitted. Reason: ${submission.autoSubmitReason}`
@@ -97,29 +91,19 @@ export default function ThankYouPage() {
           </p>
         </div>
 
-        {/* Stats */}
         <div className="glass-card p-6 mb-6">
           <h2 className="font-bold text-white mb-4 text-sm uppercase tracking-wider">Submission Summary</h2>
           <div className="grid grid-cols-3 gap-4 mb-4">
-            {/* Integrity Score */}
             <div className="text-center p-3 rounded-xl bg-white/5">
               <Shield className="w-5 h-5 mx-auto mb-1" style={{ color: integrityColor }} />
-              <p className="text-2xl font-extrabold" style={{ color: integrityColor }}>
-                {integrityScore}
-              </p>
+              <p className="text-2xl font-extrabold" style={{ color: integrityColor }}>{integrityScore}</p>
               <p className="text-xs text-gray-500 mt-0.5">Integrity</p>
             </div>
-
-            {/* Answers */}
             <div className="text-center p-3 rounded-xl bg-white/5">
               <CheckCircle className="w-5 h-5 mx-auto mb-1 text-blue-400" />
-              <p className="text-2xl font-extrabold text-blue-400">
-                {answeredCount}/{config?.questions?.length || 0}
-              </p>
+              <p className="text-2xl font-extrabold text-blue-400">{answeredCount}/{config?.questions?.length || 0}</p>
               <p className="text-xs text-gray-500 mt-0.5">Answered</p>
             </div>
-
-            {/* Time */}
             <div className="text-center p-3 rounded-xl bg-white/5">
               <Clock className="w-5 h-5 mx-auto mb-1 text-cyan-400" />
               <p className="text-sm font-bold text-cyan-400 leading-tight">{submittedAt}</p>
@@ -127,7 +111,6 @@ export default function ThankYouPage() {
             </div>
           </div>
 
-          {/* Answers preview */}
           {submission?.answers && submission.answers.length > 0 && config && (
             <div className="space-y-3">
               {config.questions.map((q, idx) => {
@@ -136,9 +119,7 @@ export default function ThankYouPage() {
                   <div key={idx} className="p-3 rounded-xl bg-white/5 border border-white/5">
                     <div className="flex justify-between items-center mb-1">
                       <p className="text-xs font-semibold text-gray-300">Q{idx + 1}: {q.title}</p>
-                      {ans && (
-                        <span className="badge badge-blue text-xs">{ans.wordCount} words</span>
-                      )}
+                      {ans && <span className="badge badge-blue text-xs">{ans.wordCount} words</span>}
                     </div>
                     {ans ? (
                       <p className="text-xs text-gray-400 line-clamp-2">{ans.text}</p>
@@ -152,7 +133,6 @@ export default function ThankYouPage() {
           )}
         </div>
 
-        {/* Violations summary if any */}
         {(submission?.tabSwitchCount ?? 0) + (submission?.fullscreenExitCount ?? 0) > 0 && (
           <div className="glass-card p-4 mb-6 border-amber-500/20 bg-amber-950/10">
             <p className="text-amber-300 text-sm font-semibold mb-2">Violations Recorded</p>
@@ -163,10 +143,9 @@ export default function ThankYouPage() {
           </div>
         )}
 
-        {/* CTA */}
         <button
           id="go-home-btn"
-          onClick={() => router.replace('/home')}
+          onClick={() => navigate('/home', { replace: true })}
           className="btn-primary w-full flex items-center justify-center gap-2 py-4"
         >
           <Home className="w-5 h-5" />

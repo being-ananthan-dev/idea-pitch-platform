@@ -1,7 +1,5 @@
-'use client';
-
 import { useEffect, useCallback, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { getSubmission, getParticipant } from '@/lib/firestore';
 
@@ -25,7 +23,7 @@ interface UseFlowGuardOptions {
  */
 export function useFlowGuard({ requiredStep, requirePhone = false }: UseFlowGuardOptions) {
   const { user, loading } = useAuth();
-  const router = useRouter();
+  const navigate = useNavigate();
   const lastCheckedUser = useRef<string | null | undefined>(undefined);
   const [submissionStatus, setSubmissionStatus] = useState<string | null>(null);
 
@@ -37,13 +35,13 @@ export function useFlowGuard({ requiredStep, requirePhone = false }: UseFlowGuar
     lastCheckedUser.current = currentUserId;
 
     if (!user) {
-      if (requiredStep !== 'login') router.replace('/login');
+      if (requiredStep !== 'login') navigate('/login', { replace: true });
       return;
     }
 
     // User is logged in
     if (requiredStep === 'login') {
-      router.replace('/home');
+      navigate('/home', { replace: true });
       return;
     }
 
@@ -64,13 +62,13 @@ export function useFlowGuard({ requiredStep, requirePhone = false }: UseFlowGuar
     const hasPhone = !!(participant?.phone);
 
     if (!hasPhone && requiredStep !== 'home' && requiredStep !== 'details') {
-      router.replace('/details');
+      navigate('/details', { replace: true });
       return;
     }
 
     if (submission?.status === 'submitted' || submission?.status === 'locked') {
       if (requiredStep !== 'thankyou' && requiredStep !== 'home') {
-        router.replace('/thankyou');
+        navigate('/thankyou', { replace: true });
         return;
       }
       return;
@@ -78,7 +76,7 @@ export function useFlowGuard({ requiredStep, requirePhone = false }: UseFlowGuar
 
     if (submission?.status === 'in_progress') {
       if (requiredStep !== 'competition') {
-        router.replace('/competition');
+        navigate('/competition', { replace: true });
         return;
       }
       return;
@@ -86,9 +84,9 @@ export function useFlowGuard({ requiredStep, requirePhone = false }: UseFlowGuar
 
     // No submission yet — must follow guidelines → competition
     if (requiredStep === 'competition') {
-      router.replace('/guidelines');
+      navigate('/guidelines', { replace: true });
     }
-  }, [user, loading, router, requiredStep]);
+  }, [user, loading, navigate, requiredStep]);
 
   useEffect(() => {
     check();

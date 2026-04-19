@@ -1,7 +1,5 @@
-'use client';
-
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useFlowGuard } from '@/hooks/useFlowGuard';
 import { createSubmission, getConfig } from '@/lib/firestore';
@@ -48,7 +46,7 @@ export default function GuidelinesPage() {
   const { user } = useAuth();
   const { loading } = useFlowGuard({ requiredStep: 'guidelines' });
   const { showModal } = useModal();
-  const router = useRouter();
+  const navigate = useNavigate();
   const [starting, setStarting] = useState(false);
   const [error, setError] = useState('');
   const [agreed, setAgreed] = useState(false);
@@ -72,7 +70,6 @@ export default function GuidelinesPage() {
         return;
       }
 
-      // Create submission document (server timestamp governs the timer)
       const participant = { name: user.displayName || '', email: user.email || '' };
       await createSubmission(
         user.uid,
@@ -81,15 +78,14 @@ export default function GuidelinesPage() {
         config.questions.map(q => q.timer)
       );
 
-      // Request fullscreen
       try {
         await document.documentElement.requestFullscreen();
       } catch {
         // Fullscreen not supported or denied — continue anyway
       }
 
-      router.push('/competition');
-    } catch (err) {
+      navigate('/competition');
+    } catch {
       showModal({
         title: 'Launch Failed',
         message: 'Failed to start the competition. Please check your connection and try again.',
@@ -112,7 +108,6 @@ export default function GuidelinesPage() {
   return (
     <div className="auth-container py-12">
       <div className="w-full max-w-2xl animate-fade-in-up">
-        {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[11px] font-bold text-blue-400 uppercase tracking-widest mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
@@ -122,7 +117,6 @@ export default function GuidelinesPage() {
           <p className="text-gray-400 text-sm">Read carefully before starting. These rules are strictly enforced.</p>
         </div>
 
-        {/* Warning Banner */}
         <div className="rounded-xl border border-amber-500/30 bg-amber-950/20 p-4 mb-6 flex items-center gap-3">
           <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />
           <p className="text-amber-300 text-sm font-medium">
@@ -130,7 +124,6 @@ export default function GuidelinesPage() {
           </p>
         </div>
 
-        {/* Rules */}
         <div className="glass-card p-6 mb-6 space-y-5">
           {RULES.map((rule, idx) => (
             <div key={idx} className="flex items-start gap-4 pb-5 border-b border-white/5 last:border-0 last:pb-0">
@@ -145,7 +138,6 @@ export default function GuidelinesPage() {
           ))}
         </div>
 
-        {/* Answer Requirements */}
         <div className="glass-card p-6 mb-6">
           <h2 className="font-bold text-white mb-4 flex items-center gap-2">
             <Timer className="w-4 h-4 text-blue-400" /> Answer Requirements
@@ -165,7 +157,6 @@ export default function GuidelinesPage() {
           </div>
         </div>
 
-        {/* Integrity Score */}
         <div className="glass-card p-6 mb-6">
           <h2 className="font-bold text-white mb-3 flex items-center gap-2">
             <Shield className="w-4 h-4 text-cyan-400" /> Integrity Score
@@ -179,7 +170,6 @@ export default function GuidelinesPage() {
           </div>
         </div>
 
-        {/* Agreement */}
         <label className="flex items-start gap-3 cursor-pointer mb-6 select-none">
           <input
             id="agree-checkbox"

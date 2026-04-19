@@ -1,6 +1,6 @@
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 
-export default function NotFound() {
+export default function NotFoundPage() {
   return (
     <div className="min-h-screen bg-[#0A0F1E] flex flex-col items-center justify-center text-white p-4">
       <div className="text-center">
@@ -22,7 +22,7 @@ export default function NotFound() {
           The page you are looking for doesn&apos;t exist or has been moved.
         </p>
         <Link
-          href="/"
+          to="/"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white"
           style={{ background: 'linear-gradient(135deg, #3B82F6, #2563EB)' }}
         >

@@ -1,7 +1,5 @@
-'use client';
-
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useFlowGuard } from '@/hooks/useFlowGuard';
 import { getParticipant, createOrUpdateParticipant } from '@/lib/firestore';
@@ -10,7 +8,7 @@ import { Loader2, User, Mail, Phone, ArrowRight, CheckCircle } from 'lucide-reac
 export default function DetailsPage() {
   const { user } = useAuth();
   const { loading } = useFlowGuard({ requiredStep: 'details' });
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -48,8 +46,8 @@ export default function DetailsPage() {
         email: email.trim(),
         phone: phone.trim(),
       });
-      router.push('/guidelines');
-    } catch (err) {
+      navigate('/guidelines');
+    } catch {
       setError('Failed to save details. Please try again.');
       setSaving(false);
     }
@@ -66,7 +64,6 @@ export default function DetailsPage() {
   return (
     <div className="auth-container">
       <div className="w-full max-w-lg animate-fade-in-up">
-        {/* Header */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[11px] font-bold text-blue-400 uppercase tracking-widest mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
@@ -78,7 +75,6 @@ export default function DetailsPage() {
 
         <div className="glass-card p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Name */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">
                 <span className="flex items-center gap-1.5"><User className="w-3.5 h-3.5" /> Full Name</span>
@@ -94,7 +90,6 @@ export default function DetailsPage() {
               />
             </div>
 
-            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">
                 <span className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> Email Address</span>
@@ -110,15 +105,12 @@ export default function DetailsPage() {
               <p className="text-xs text-gray-500 mt-1">Auto-filled from Google. Cannot be changed.</p>
             </div>
 
-            {/* Phone */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">
                 <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> Phone Number <span className="text-red-400">*</span></span>
               </label>
               <div className="flex gap-2">
-                <div className="input-field w-16 flex items-center justify-center text-gray-400 text-sm shrink-0 px-3">
-                  +91
-                </div>
+                <div className="input-field w-16 flex items-center justify-center text-gray-400 text-sm shrink-0 px-3">+91</div>
                 <input
                   id="phone-input"
                   type="tel"
@@ -139,7 +131,6 @@ export default function DetailsPage() {
               </div>
             )}
 
-            {/* Info box */}
             <div className="p-4 rounded-xl bg-blue-950/30 border border-blue-500/20 text-xs text-gray-400 leading-relaxed">
               <CheckCircle className="w-4 h-4 text-blue-400 inline mr-1.5 -mt-0.5" />
               Your details are stored securely and used only for competition purposes. You can edit them before starting.

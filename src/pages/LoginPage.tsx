@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, FormEvent } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useFlowGuard } from '@/hooks/useFlowGuard';
@@ -14,7 +12,6 @@ export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
   const [submitting, setSubmitting] = useState(false);
   const [googleSubmitting, setGoogleSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -37,7 +34,6 @@ export default function LoginPage() {
       setError('Please enter both email and password.');
       return;
     }
-    
     setError('');
     setSubmitting(true);
     try {
@@ -67,26 +63,19 @@ export default function LoginPage() {
 
   return (
     <div className="auth-container">
-      {/* Main SaaS Layout Card */}
       <div className="w-full max-w-[1000px] min-h-[600px] h-auto bg-[#0D1326] border border-white/5 rounded-[20px] shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-[1.2fr_0.8fr] animate-fade-in-up">
         
-        {/* LEFT COLUMN: Branding & Illustration (Hidden on Mobile) */}
+        {/* LEFT COLUMN: Branding */}
         <div className="hidden md:flex flex-col items-center justify-center p-12 text-center bg-gradient-to-br from-blue-900/40 to-cyan-900/10 relative overflow-hidden">
-          {/* Subtle decorative background shapes */}
           <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px]"></div>
           <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px]"></div>
-          
           <div className="z-10 flex flex-col items-center gap-6">
             <div className="inline-flex items-center justify-center w-20 h-20 rounded-[24px] bg-gradient-to-br from-blue-500 to-cyan-500 shadow-[0_0_40px_rgba(59,130,246,0.3)]">
               <span className="text-4xl">💡</span>
             </div>
             <div>
-              <h1 className="text-4xl font-extrabold tracking-tight text-white mb-2">
-                IntelliPitch
-              </h1>
-              <p className="text-blue-300 font-medium tracking-widest text-sm uppercase">
-                IEEE SB MCET
-              </p>
+              <h1 className="text-4xl font-extrabold tracking-tight text-white mb-2">IntelliPitch</h1>
+              <p className="text-blue-300 font-medium tracking-widest text-sm uppercase">IEEE SB MCET</p>
             </div>
             <p className="text-gray-400 mt-4 leading-relaxed max-w-sm">
               Architect solutions to real-world problems under pressure. Judged blind, timed to the millisecond.
@@ -94,23 +83,20 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* RIGHT COLUMN: Form Area */}
+        {/* RIGHT COLUMN: Form */}
         <div className="p-8 md:p-10 lg:p-12 flex flex-col justify-center h-full bg-[#0D1326]">
           <div className="w-full max-w-md mx-auto">
-            {/* Headers */}
             <h2 className="text-3xl font-bold text-white mb-2">Welcome!</h2>
             <p className="text-gray-400 text-sm mb-8">
               {isSignUp ? 'Create an account to participate' : 'Sign in to your account'}
             </p>
 
-            {/* Error Message */}
             {error && (
               <div className="mb-6 p-3 rounded-xl bg-red-900/30 border border-red-500/40 text-red-300 text-sm text-center">
                 {error}
               </div>
             )}
 
-            {/* Form */}
             <form onSubmit={handleEmailSubmit} className="flex flex-col gap-5">
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-semibold text-gray-300 uppercase tracking-wider ml-1">Email</label>
@@ -143,7 +129,6 @@ export default function LoginPage() {
                 />
               </div>
 
-              {/* Action Buttons */}
               <div className="flex flex-col gap-3 mt-2">
                 <button
                   type="submit"
@@ -156,10 +141,7 @@ export default function LoginPage() {
                 
                 <button
                   type="button"
-                  onClick={() => {
-                    setIsSignUp(!isSignUp);
-                    setError('');
-                  }}
+                  onClick={() => { setIsSignUp(!isSignUp); setError(''); }}
                   className="w-full py-3.5 rounded-[12px] font-semibold text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-all border border-transparent"
                 >
                   {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
@@ -167,7 +149,6 @@ export default function LoginPage() {
               </div>
             </form>
 
-            {/* Divider */}
             <div className="relative flex items-center justify-center my-8">
               <div className="absolute w-full border-t border-white/10"></div>
               <div className="relative bg-[#0D1326] px-4 text-xs font-bold text-gray-500 uppercase tracking-widest">
@@ -175,7 +156,6 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Social Logins */}
             <button
               type="button"
               onClick={handleGoogleSignIn}
@@ -194,12 +174,10 @@ export default function LoginPage() {
               )}
               Google
             </button>
-            
           </div>
         </div>
       </div>
       
-      {/* Footer out of card bounds like SaaS apps */}
       <p className="text-center text-xs text-gray-600 mt-6 md:mt-8 tracking-wide">
         © 2025 IEEE SB MCET
       </p>

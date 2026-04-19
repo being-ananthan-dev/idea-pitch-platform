@@ -1,47 +1,43 @@
-'use client';
-
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { getSubmission, getParticipant } from '@/lib/firestore';
 
 export default function LoadingPage() {
   const { user, loading } = useAuth();
-  const router = useRouter();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (loading) return;
 
     const redirect = async () => {
       if (!user) {
-        router.replace('/login');
+        navigate('/login', { replace: true });
         return;
       }
 
-      // Parallel Firestore reads — no sequential waiting
       const [participant, submission] = await Promise.all([
         getParticipant(user.uid),
         getSubmission(user.uid),
       ]);
 
       if (!participant?.phone) {
-        router.replace('/home');
+        navigate('/home', { replace: true });
         return;
       }
 
       if (submission?.status === 'submitted' || submission?.status === 'locked') {
-        router.replace('/thankyou');
+        navigate('/thankyou', { replace: true });
       } else if (submission?.status === 'in_progress') {
-        router.replace('/competition');
+        navigate('/competition', { replace: true });
       } else {
-        router.replace('/home');
+        navigate('/home', { replace: true });
       }
     };
 
     redirect();
-  }, [user, loading, router]);
+  }, [user, loading, navigate]);
 
-  // Renders instantly — no blocking on auth state
   return (
     <div className="min-h-screen bg-[#0A0F1E] flex flex-col items-center justify-center gap-6">
       <div

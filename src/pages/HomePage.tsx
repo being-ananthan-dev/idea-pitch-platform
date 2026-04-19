@@ -94,7 +94,7 @@ export default function HomePage() {
           )}
           <div className="flex items-center gap-3">
             <button onClick={handleEnterEvent} className="btn-primary flex items-center gap-2 text-[11px] px-5 py-2 uppercase tracking-widest rounded-full">
-              Start Pitching
+              {(submissionStatus === 'submitted' || submissionStatus === 'locked') ? 'View Submission' : 'Start Pitching'}
               <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
             {user && (
@@ -145,7 +145,7 @@ export default function HomePage() {
                 className="btn-primary group flex items-center gap-3 text-sm font-black uppercase tracking-widest px-10 py-5 rounded-2xl"
               >
                 <Zap className="w-5 h-5 fill-white" />
-                Start Pitching
+                {(submissionStatus === 'submitted' || submissionStatus === 'locked') ? 'View Submission' : 'Start Pitching'}
                 <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </motion.button>
             </motion.div>
@@ -165,19 +165,6 @@ export default function HomePage() {
           </motion.div>
         </motion.div>
       </section>
-
-      {/* ── TICKER TAPE ── */}
-      <div className="border-y border-white/[0.04] bg-white/[0.01] py-5 overflow-hidden relative backdrop-blur-md">
-        <div className="ticker-tape text-[10px] sm:text-[11px] font-black uppercase tracking-[0.4em] text-gray-600 gap-16">
-          {[...Array(2)].map((_, i) => (
-            <div key={i} className="flex gap-16 items-center shrink-0">
-              {['⏱ Timed Challenges', '🛡 Anti-Cheat Engine', '📊 Blind Evaluations', '🏆 ₹10,000 Prize Pool', '🔒 Data Encrypted', '⚡ Auto-Save Active', '📋 3 Questions', '👁 Zero Bias Scoring'].map((t) => (
-                <span key={t} className="inline-flex items-center gap-2 text-white/50">{t}</span>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* ── BENTO SECTION ── */}
       <section className="py-32 relative">

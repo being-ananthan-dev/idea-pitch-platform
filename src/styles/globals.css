@@ -335,7 +335,7 @@ body {
   padding: 24px;
   transition: all 0.4s ease;
   display: flex;
-  flex-col: column;
+  flex-direction: column;
 }
 
 .bento-item:hover {

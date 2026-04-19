@@ -214,70 +214,7 @@ export default function HomePage() {
             </div>
           ))}
         </div>
-      </div>
 
-      {/* ════════════════════════════════════════════════════════
-          STATS ROW
-      ════════════════════════════════════════════════════════ */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-8 py-20">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-          <StatCard value="1,200+" label="Participants" icon={Users} color="bg-blue-500/10 text-blue-400" />
-          <StatCard value="4" label="Evaluation Criteria" icon={Target} color="bg-cyan-500/10 text-cyan-400" />
-          <StatCard value="₹10K" label="Total Prize Pool" icon={Trophy} color="bg-yellow-500/10 text-yellow-400" />
-          <StatCard value="100%" label="Blind Judging" icon={Award} color="bg-purple-500/10 text-purple-400" />
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════════
-          FEATURES BENTO GRID
-      ════════════════════════════════════════════════════════ */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-8 pb-24">
-        <div className="text-center mb-14 reveal">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-bold text-blue-300 uppercase tracking-widest mb-5">
-            <Sparkles className="w-3.5 h-3.5" />
-            Platform Capabilities
-          </div>
-          <h2 className="text-4xl md:text-5xl font-black leading-tight mb-4">
-            Built for <span className="gradient-text">Precision.</span><br />Engineered for <span className="gradient-text">Fairness.</span>
-          </h2>
-          <p className="text-gray-400 max-w-xl mx-auto">Every feature is designed to give every participant a level playing field.</p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-5">
-          {/* Large card */}
-          <div className="md:col-span-2 glass-card p-10 reveal flex flex-col gap-5 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-72 h-72 bg-cyan-500/5 blur-[80px] rounded-full pointer-events-none" />
-            <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
-              <Clock className="w-7 h-7 text-cyan-400" />
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold text-white mb-3">Relentless Server-Side Timers</h3>
-              <p className="text-gray-400 leading-relaxed max-w-lg">
-                Forget client-side clocks that can be paused or manipulated. Our engine syncs directly with server timestamps — every millisecond is recorded and enforced. The moment time expires, your submission is locked. <span className="text-cyan-400 font-semibold">Absolute fairness.</span>
-              </p>
-            </div>
-          </div>
-
-          <FeatureCard icon={Shield} iconBg="bg-purple-500/10 text-purple-400" title="Anti-Cheat Matrix" desc="Tab switches, fullscreen exits, and focus changes are silently logged. 3 infractions trigger automatic submission." delay="0.1s" />
-          <FeatureCard icon={Target} iconBg="bg-yellow-500/10 text-yellow-400" title="Blind Evaluations" desc="Judges see only the raw ideas. Names, emails, and identifiers are completely stripped before review." delay="0.2s" />
-
-          {/* Large card */}
-          <div className="md:col-span-2 glass-card p-10 reveal flex flex-col gap-5 relative overflow-hidden" style={{ transitionDelay: '0.1s' }}>
-            <div className="absolute bottom-0 left-0 w-72 h-72 bg-blue-500/5 blur-[80px] rounded-full pointer-events-none" />
-            <div className="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-              <Cpu className="w-7 h-7 text-blue-400" />
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold text-white mb-3">Military-Grade Auto-Save</h3>
-              <p className="text-gray-400 leading-relaxed max-w-lg">
-                Every keystroke is debounced and committed to Firestore. If you lose power, lose WiFi, or accidentally close the tab — your draft <span className="text-blue-400 font-semibold">is exactly where you left it</span> when you return. Zero data loss, ever.
-              </p>
-            </div>
-          </div>
-
-          <FeatureCard icon={FileText} iconBg="bg-emerald-500/10 text-emerald-400" title="Structured Answers" desc="3 distinct timed questions on Problem, Solution, and Impact. Every participant answers the same challenge." delay="0.3s" />
-        </div>
-      </section>
 
       {/* ════════════════════════════════════════════════════════
           HOW IT WORKS
@@ -319,50 +256,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ════════════════════════════════════════════════════════
-          CINEMATIC CTA
-      ════════════════════════════════════════════════════════ */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-8 py-10 pb-24">
-        <div className="relative rounded-[2.5rem] overflow-hidden border border-white/[0.08] bg-[#060B14] text-center py-28 px-6 flex flex-col items-center reveal">
 
-          {/* Inner glow — CSS gradient, zero blur cost */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(37,99,235,0.18) 0%, transparent 70%)' }} />
-
-          {/* Grid texture overlay */}
-          <div className="absolute inset-0 opacity-[0.03]"
-            style={{ backgroundImage: 'linear-gradient(rgba(59,130,246,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.5) 1px,transparent 1px)', backgroundSize: '60px 60px' }} />
-
-          <div className="relative z-10 flex flex-col items-center gap-7 max-w-3xl">
-            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center shadow-[0_0_40px_rgba(59,130,246,0.4)]">
-              <Trophy className="w-12 h-12 text-white" />
-            </div>
-
-            <h2 className="text-5xl md:text-6xl font-black text-white leading-tight tracking-tight">
-              Your Stage Awaits.
-            </h2>
-
-            <p className="text-xl text-blue-200/80 font-medium leading-relaxed">
-              The judges are ready. The clock hasn't started yet.<br />It's time to translate your vision into a ₹10,000 prize.
-            </p>
-
-            <button
-              id="cta-launch-btn"
-              onClick={() => router.push('/details')}
-              className="group relative overflow-hidden flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-cyan-500 text-white font-bold text-lg px-12 py-5 rounded-full transition-all duration-500 shadow-[0_0_40px_rgba(37,99,235,0.5)] hover:shadow-[0_0_60px_rgba(37,99,235,0.7)] hover:scale-105 active:scale-95"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-              <Zap className="w-5 h-5 fill-white relative z-10" />
-              <span className="relative z-10">Launch Pitch Terminal</span>
-              <ChevronRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
-            </button>
-
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <CheckCircle2 className="w-4 h-4 text-green-500" />
-              Free to participate · Google Sign-In required
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ── Footer ───────────────────────────────────────────── */}
       <footer className="border-t border-white/[0.06] bg-[#06080F] py-10 px-4">

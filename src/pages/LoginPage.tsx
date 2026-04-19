@@ -41,7 +41,7 @@ export default function LoginPage() {
             className="relative z-10 flex items-center gap-3"
           >
             <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl shadow-lg">💡</div>
-            <span className="font-extrabold text-sm tracking-tighter text-white uppercase italic">IntelliPitch</span>
+            <span className="font-extrabold text-sm tracking-tighter text-white uppercase italic">AdaptiveEd Pitch</span>
           </motion.div>
 
           <div className="relative z-10 mt-12 md:mt-0">
@@ -59,7 +59,7 @@ export default function LoginPage() {
               transition={{ delay: 0.3 }}
               className="text-blue-100/80 text-sm max-w-xs font-medium leading-relaxed"
             >
-              Join 100+ visionaries. Pitch your masterpiece in a blind-judged, high-stakes digital environment.
+              Reengineering education for an uncertain future. Join the elite sprint to architect the next-gen learning paradigm.
             </motion.p>
           </div>
 

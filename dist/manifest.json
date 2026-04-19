@@ -1,7 +1,7 @@
 {
-  "name": "IntelliPitch — IEEE SB MCET",
-  "short_name": "IntelliPitch",
-  "description": "Secure, time-governed idea pitching competition platform.",
+  "name": "AdaptiveEd Pitch — Reengineering Education",
+  "short_name": "AdaptiveEd",
+  "description": "Reengineering education for an uncertain future.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#030712",

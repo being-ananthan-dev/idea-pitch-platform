@@ -13,7 +13,7 @@ export default function Header() {
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-base shadow-lg shadow-blue-500/20">
           💡
         </div>
-        <span className="font-black text-sm tracking-tighter text-white uppercase italic hidden sm:block">IntelliPitch</span>
+        <span className="font-black text-sm tracking-tighter text-white uppercase italic hidden sm:block">AdaptiveEd Pitch</span>
       </div>
 
       <div className="flex items-center gap-4">

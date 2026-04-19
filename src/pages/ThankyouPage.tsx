@@ -89,7 +89,7 @@ export default function ThankyouPage() {
           <p className="text-gray-400 max-w-sm mx-auto text-sm leading-relaxed">
             {submission?.autoSubmitReason
               ? `Your answers were automatically submitted. Reason: ${submission.autoSubmitReason}`
-              : 'Your answers have been successfully submitted. Thank you for participating in IntelliPitch!'}
+              : 'Your answers have been successfully submitted. Thank you for participating in AdaptiveEd Pitch!'}
           </p>
         </div>
 

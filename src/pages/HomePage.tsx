@@ -83,7 +83,7 @@ export default function HomePage() {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-base shadow-lg shadow-blue-500/20">
             💡
           </div>
-          <span className="font-black text-sm tracking-tighter text-white uppercase italic">IntelliPitch</span>
+          <span className="font-black text-sm tracking-tighter text-white uppercase italic">AdaptiveEd Pitch</span>
         </div>
 
         <div className="flex items-center gap-4">
@@ -129,12 +129,12 @@ export default function HomePage() {
             <motion.div variants={FADE_UP} className="w-full">
               <h1 className="text-6xl sm:text-7xl md:text-8xl font-black leading-[0.95] tracking-tighter text-white pb-4">
                 Pitch Your<br />
-                <span className="gradient-text-animated filter drop-shadow-[0_0_50px_rgba(139,92,246,0.3)]">Masterpiece.</span>
+                <span className="gradient-text-animated filter drop-shadow-[0_0_50px_rgba(139,92,246,0.3)]">Education.</span>
               </h1>
             </motion.div>
 
             <motion.p variants={FADE_UP} className="text-lg text-gray-400 leading-relaxed w-full max-w-2xl px-2 sm:px-0 font-medium">
-              The high-stakes arena for architects of the future. Proof your vision under pressure — judged blind, timed to the millisecond.
+              Reengineering education for an uncertain future. Join the elite sprint to architect the next-gen learning paradigm.
             </motion.p>
 
             <motion.div variants={FADE_UP} className="flex flex-col sm:flex-row items-center justify-center gap-5 pt-4">
@@ -236,8 +236,8 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto flex flex-col items-center gap-8 text-center">
            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-2xl shadow-2xl shadow-blue-500/30">💡</div>
            <div>
-             <div className="font-black text-white text-lg tracking-tighter uppercase mb-2">IntelliPitch</div>
-             <p className="text-gray-500 text-xs mb-8">© 2026 IEEE SB MCET — CREATED FOR THE ARCHITECTS OF TOMORROW</p>
+             <div className="font-black text-white text-lg tracking-tighter uppercase mb-2">AdaptiveEd Pitch</div>
+             <p className="text-gray-500 text-xs mb-8">© 2026 IEEE SB MCET — REENGINEERING EDUCATION FOR AN UNCERTAIN FUTURE</p>
            </div>
            <div className="flex items-center gap-6 text-[10px] font-bold text-gray-600 uppercase tracking-widest">
              <span className="hover:text-white cursor-pointer transition-colors">Privacy</span>

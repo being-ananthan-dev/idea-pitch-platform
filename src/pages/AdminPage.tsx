@@ -204,7 +204,7 @@ export default function AdminPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between h-16">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-sm shadow-[0_0_12px_rgba(59,130,246,0.4)]">💡</div>
-            <span className="font-bold gradient-text">IntelliPitch</span>
+            <span className="font-bold gradient-text">AdaptiveEd Pitch</span>
             <span className="badge badge-red text-[10px] tracking-widest uppercase">Admin</span>
           </div>
           <div className="flex items-center gap-3">

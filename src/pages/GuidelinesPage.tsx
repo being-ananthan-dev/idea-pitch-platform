@@ -5,7 +5,7 @@ import { useFlowGuard } from '@/hooks/useFlowGuard';
 import { createSubmission, getConfig } from '@/lib/firestore';
 import {
   Loader2, Clock, Shield, AlertTriangle, ChevronRight, ArrowRight,
-  Timer, Maximize, Eye, RotateCcw
+  Timer, Zap
 } from 'lucide-react';
 import Header from '@/components/Header';
 import { useModal } from '@/context/ModalContext';

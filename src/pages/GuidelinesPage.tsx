@@ -5,36 +5,41 @@ import { useFlowGuard } from '@/hooks/useFlowGuard';
 import { createSubmission, getConfig } from '@/lib/firestore';
 import {
   Loader2, Clock, Shield, AlertTriangle, ChevronRight, ArrowRight,
-  Timer, Zap
+  Timer, Maximize, Eye, RotateCcw
 } from 'lucide-react';
 import Header from '@/components/Header';
 import { useModal } from '@/context/ModalContext';
 
 const RULES = [
   {
-    icon: <Zap className="w-5 h-5 text-blue-400" />,
-    title: 'Practical Challenge',
-    desc: 'A practical real-world challenge will be given. Articulate a concise, solution-driven response supported by clear reasoning.',
+    icon: <Clock className="w-5 h-5 text-blue-400" />,
+    title: 'Time-Governed Questions',
+    desc: 'Each question has a strict timer (Q1: 2min, Q2: 2min, Q3: 3min). When time runs out, your answer is auto-saved.',
   },
   {
-    icon: <Timer className="w-5 h-5 text-cyan-400" />,
-    title: '3-Phase Sprint',
-    desc: 'A total of 3 questions are provided. You must answer each one within the given time constraints to proceed.',
+    icon: <ChevronRight className="w-5 h-5 text-cyan-400" />,
+    title: 'One-Way Navigation',
+    desc: 'You cannot go back to a previous question. Each question must be answered before moving forward.',
   },
   {
-    icon: <Clock className="w-5 h-5 text-purple-400" />,
-    title: 'Duration: 2m 30s',
-    desc: 'Each question is assigned a duration of 2 minutes and 30 seconds. Note: You will not be allowed to revisit previous questions.',
+    icon: <Eye className="w-5 h-5 text-purple-400" />,
+    title: 'Tab Switching Detected',
+    desc: 'Switching browser tabs is monitored. Doing so will trigger a warning. Three violations = auto-submission.',
   },
   {
-    icon: <Shield className="w-5 h-5 text-green-400" />,
-    title: 'Auto-Submission',
-    desc: 'Once the allotted time concludes, the platform will automatically submit your responses to the secure database.',
+    icon: <Maximize className="w-5 h-5 text-green-400" />,
+    title: 'Stay in Fullscreen',
+    desc: 'The competition runs in fullscreen mode. Exiting fullscreen is treated as a violation.',
   },
   {
-    icon: <AlertTriangle className="w-5 h-5 text-amber-400" />,
-    title: 'Anti-Cheat Protocol',
-    desc: 'Tab switching and exiting fullscreen are monitored. 3 violations will trigger an immediate auto-submission.',
+    icon: <RotateCcw className="w-5 h-5 text-amber-400" />,
+    title: 'Refresh-Safe Timer',
+    desc: 'Timer state is saved server-side. Refreshing the page will resume exactly where you left off.',
+  },
+  {
+    icon: <Shield className="w-5 h-5 text-red-400" />,
+    title: 'Auto Submission',
+    desc: 'After the final question timer expires — or upon 3 anti-cheat violations — your answers are submitted automatically.',
   },
 ];
 

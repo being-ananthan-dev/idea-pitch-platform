@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import "vanilla-framework.css";
 
 :root {
   --font-inter: 'Inter', sans-serif;
